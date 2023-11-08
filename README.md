@@ -1,6 +1,6 @@
 - 👋 Hi, I’m @jamesmoon2
 - 👀 I’m interested in security.
-- 🌱 I’m currently learning python and cloud security. 
+- 🌱 I’m currently learning python and  security. 
 
 <!---
 jamesmoon2/jamesmoon2 is a ✨ special ✨ repository because its `README.md` (this file) appears on your GitHub profile.
