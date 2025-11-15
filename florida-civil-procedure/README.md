@@ -62,7 +62,7 @@ florida-civil-procedure/
 - Modern web browser (Chrome, Firefox, Safari, Edge)
 - No build tools required - runs directly in browser!
 
-### Installation
+### Local Installation
 
 1. **Clone or download** this repository
 2. **Open** `index.html` in your web browser
@@ -78,6 +78,33 @@ npx serve
 
 # Then open http://localhost:8000
 ```
+
+### ☁️ Cloud Deployment (AWS S3)
+
+This application is **perfect for S3 static website hosting**!
+
+**Quick Deploy:**
+```bash
+cd florida-civil-procedure
+./deploy.sh your-bucket-name us-east-1
+```
+
+**Manual Deploy:**
+```bash
+# Upload to S3
+aws s3 sync . s3://your-bucket-name --delete
+
+# Enable static website hosting
+aws s3 website s3://your-bucket-name --index-document index.html
+```
+
+**Complete deployment guide:** See [DEPLOYMENT.md](DEPLOYMENT.md) for:
+- Step-by-step AWS Console instructions
+- CloudFront CDN setup for HTTPS
+- Custom domain configuration
+- CI/CD with GitHub Actions
+- Cost estimates ($0.50-$5/month)
+- Security best practices
 
 ## 🎮 Usage
 
