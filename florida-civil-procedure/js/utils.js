@@ -87,6 +87,14 @@ export function formatTooltip(node) {
         html += `<div class="section"><div class="label">Deadline Type</div>${deadlineText}</div>`;
     }
 
+    if (node.notes) {
+        html += `<div class="section notes"><div class="label">Practice Note</div>${node.notes}</div>`;
+    }
+
+    if (node.isExpandable) {
+        html += `<div class="section expandable-hint">Click to expand/collapse sub-steps</div>`;
+    }
+
     return html;
 }
 
