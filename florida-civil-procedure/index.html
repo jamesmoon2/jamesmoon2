@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Interactive visualization of the Florida Civil Procedure workflow, including timing, costs, documents, decision logic, and exception handling">
+    <meta name="keywords" content="Florida, Civil Procedure, Legal Workflow, Litigation Process, Court Rules">
+    <meta name="author" content="Legal Process Visualization">
+    <title>Florida Civil Procedure - Interactive Workflow Visualization</title>
+
+    <!-- D3.js Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"
+            integrity="sha512-M7nHCiNUOwFt6Us3r8alutZLm9qMt4s9951uo8jqO4UwJ1hziseL6O3ndFyigx6+LREfZqnhHxYjKRJ8ZQ69DQ=="
+            crossorigin="anonymous"
+            referrerpolicy="no-referrer"></script>
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <h1>Florida Civil Procedure - Interactive Workflow Visualization</h1>
+            <p class="subtitle">
+                Complete software specification with timing, costs, documents, decision logic, and exception handling.
+                Navigate through the entire civil litigation process from complaint to appeal.
+            </p>
+
+            <!-- Statistics -->
+            <div class="stats" role="region" aria-label="Workflow Statistics">
+                <!-- Statistics will be populated by JavaScript -->
+            </div>
+        </header>
+
+        <!-- Controls -->
+        <nav class="controls" role="toolbar" aria-label="Visualization Controls">
+            <!-- Zoom Controls -->
+            <div class="control-group">
+                <button id="resetZoom" aria-label="Reset zoom and pan to default view">
+                    🔄 Reset View
+                </button>
+                <button id="zoomIn" aria-label="Zoom in">
+                    ➕ Zoom In
+                </button>
+                <button id="zoomOut" aria-label="Zoom out">
+                    ➖ Zoom Out
+                </button>
+            </div>
+
+            <!-- Export Controls -->
+            <div class="control-group">
+                <button id="exportPNG" class="secondary" aria-label="Export visualization as PNG image">
+                    📷 Export PNG
+                </button>
+                <button id="exportSVG" class="secondary" aria-label="Export visualization as SVG vector">
+                    📐 Export SVG
+                </button>
+            </div>
+
+            <!-- Search -->
+            <div class="search-container">
+                <label for="searchInput" class="sr-only">Search workflow steps</label>
+                <input
+                    type="text"
+                    id="searchInput"
+                    placeholder="Search steps, rules, stages... (Press '/' to focus)"
+                    aria-label="Search for workflow steps, rules, or stages"
+                    autocomplete="off"
+                >
+                <span class="search-icon" aria-hidden="true">🔍</span>
+                <div class="search-results" role="listbox" aria-label="Search results">
+                    <!-- Search results will be populated by JavaScript -->
+                </div>
+            </div>
+
+            <!-- Filters -->
+            <div class="filter-group">
+                <input
+                    type="checkbox"
+                    id="showDocs"
+                    checked
+                    aria-label="Toggle document icons visibility"
+                >
+                <label for="showDocs">📄 Documents</label>
+            </div>
+
+            <div class="filter-group">
+                <input
+                    type="checkbox"
+                    id="showDec"
+                    checked
+                    aria-label="Toggle decision points visibility"
+                >
+                <label for="showDec">◆ Decisions</label>
+            </div>
+
+            <div class="filter-group">
+                <input
+                    type="checkbox"
+                    id="showExc"
+                    checked
+                    aria-label="Toggle exception paths visibility"
+                >
+                <label for="showExc">⚠️ Exceptions</label>
+            </div>
+        </nav>
+
+        <!-- Main Chart -->
+        <main>
+            <div id="chart" role="img" aria-label="Florida Civil Procedure Workflow Diagram">
+                <!-- Chart will be rendered here by D3.js -->
+            </div>
+        </main>
+
+        <!-- Tooltip -->
+        <div class="tooltip" role="tooltip" aria-live="polite">
+            <!-- Tooltip content will be populated by JavaScript -->
+        </div>
+
+        <!-- Legend -->
+        <aside class="legend" role="region" aria-label="Visualization Legend">
+            <h2 class="legend-title">Legend & Guide</h2>
+            <div class="legend-grid">
+                <div class="legend-item">
+                    <span class="legend-icon" aria-hidden="true">🔴</span>
+                    <span><strong>Red Border:</strong> Strict statutory deadline (failure may result in case dismissal)</span>
+                </div>
+                <div class="legend-item">
+                    <span class="legend-icon" aria-hidden="true">🔷</span>
+                    <span><strong>Yellow Diamond:</strong> Decision point requiring strategic choice or business logic</span>
+                </div>
+                <div class="legend-item">
+                    <span class="legend-icon" aria-hidden="true">📄</span>
+                    <span><strong>Blue Document Icon:</strong> Required documents (hover to see complete list)</span>
+                </div>
+                <div class="legend-item">
+                    <span class="legend-icon" aria-hidden="true">💰</span>
+                    <span><strong>Green Text:</strong> Estimated cost in attorney hours or dollars</span>
+                </div>
+                <div class="legend-item">
+                    <span class="legend-icon" aria-hidden="true">⏱️</span>
+                    <span><strong>Purple Text:</strong> Duration/timeline for this step</span>
+                </div>
+                <div class="legend-item">
+                    <span class="legend-icon" aria-hidden="true">👤</span>
+                    <span><strong>Red Label:</strong> Responsible party (Attorney, Paralegal, Court, etc.)</span>
+                </div>
+                <div class="legend-item">
+                    <span class="legend-icon" aria-hidden="true">- -</span>
+                    <span><strong>Red Dashed Line:</strong> Exception or error path (e.g., default, sanctions)</span>
+                </div>
+                <div class="legend-item">
+                    <span class="legend-icon" aria-hidden="true">🎨</span>
+                    <span><strong>Color Coding:</strong> Each stage has a unique color (Filing, Service, Discovery, Trial, etc.)</span>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Keyboard Shortcuts -->
+        <aside class="shortcuts" role="region" aria-label="Keyboard Shortcuts">
+            <strong>⌨️ Keyboard Shortcuts</strong>
+            <div class="shortcut-list">
+                <span><kbd>R</kbd> Reset View</span>
+                <span><kbd>+</kbd> / <kbd>=</kbd> Zoom In</span>
+                <span><kbd>-</kbd> Zoom Out</span>
+                <span><kbd>/</kbd> Focus Search</span>
+                <span><kbd>D</kbd> Toggle Documents</span>
+                <span><kbd>E</kbd> Toggle Exceptions</span>
+                <span><kbd>ESC</kbd> Clear Selection</span>
+                <span><kbd>?</kbd> Show Help</span>
+            </div>
+        </aside>
+
+        <!-- Footer -->
+        <footer style="margin-top: 30px; padding-top: 20px; border-top: 1px solid var(--border-color); text-align: center; color: var(--text-muted); font-size: 12px;">
+            <p>
+                <strong>Note:</strong> This visualization is for educational and planning purposes only.
+                Always consult the official Florida Rules of Civil Procedure and seek professional legal advice.
+            </p>
+            <p style="margin-top: 10px;">
+                Built with <a href="https://d3js.org/" target="_blank" rel="noopener" style="color: var(--primary-blue);">D3.js</a> |
+                Data based on Florida Rules of Civil Procedure |
+                Last updated: <time datetime="2025-11-15">November 2025</time>
+            </p>
+        </footer>
+    </div>
+
+    <!-- JavaScript Modules -->
+    <script type="module" src="js/app.js"></script>
+
+    <!-- Fallback for browsers without module support -->
+    <noscript>
+        <div style="padding: 20px; background: #fee; border: 2px solid #c00; margin: 20px; border-radius: 8px;">
+            <strong>JavaScript Required:</strong> This visualization requires JavaScript to be enabled in your browser.
+            Please enable JavaScript to view the interactive workflow diagram.
+        </div>
+    </noscript>
+</body>
+</html>

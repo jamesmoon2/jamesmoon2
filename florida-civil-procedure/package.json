@@ -1,0 +1,37 @@
+{
+  "name": "florida-civil-procedure-visualization",
+  "version": "2.0.0",
+  "description": "Interactive visualization of the Florida Civil Procedure workflow with timing, costs, and decision logic",
+  "main": "index.html",
+  "type": "module",
+  "scripts": {
+    "start": "npx serve",
+    "dev": "npx serve -l 8000",
+    "lint": "echo 'No linting configured yet'",
+    "test": "echo 'No tests configured yet'"
+  },
+  "keywords": [
+    "florida",
+    "civil-procedure",
+    "legal",
+    "workflow",
+    "visualization",
+    "d3js",
+    "litigation",
+    "court-rules"
+  ],
+  "author": "Legal Process Visualization",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jamesmoon2/jamesmoon2"
+  },
+  "dependencies": {},
+  "devDependencies": {},
+  "browser": {
+    "d3": "https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  }
+}
