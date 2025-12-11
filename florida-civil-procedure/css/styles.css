@@ -451,6 +451,47 @@ button.secondary:hover {
     stroke: #22c55e;
 }
 
+/* Additional group styling for new tracks */
+.group-emergency rect {
+    stroke: #be123c;
+}
+
+.group-interlocutory rect {
+    stroke: #0d9488;
+}
+
+.group-thirdParty rect {
+    stroke: #7e22ce;
+}
+
+.group-daubert rect {
+    stroke: #b45309;
+}
+
+.group-fees rect {
+    stroke: #7c3aed;
+}
+
+.group-stay rect {
+    stroke: #0891b2;
+}
+
+.group-amendment rect {
+    stroke: #4f46e5;
+}
+
+.group-dismissal rect {
+    stroke: #64748b;
+}
+
+.group-complexity rect {
+    stroke: #0f766e;
+}
+
+.group-eDiscovery rect {
+    stroke: #d97706;
+}
+
 /* Tooltip */
 .tooltip {
     position: absolute;
