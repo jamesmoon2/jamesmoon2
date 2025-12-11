@@ -402,6 +402,96 @@ button.secondary:hover {
     stroke-width: 4 !important;
 }
 
+/* Parallel process links (Proposal for Settlement) */
+.parallel-link {
+    stroke-dasharray: 8, 4;
+    stroke-opacity: 0.4;
+}
+
+.parallel-link:hover {
+    stroke-opacity: 0.8;
+}
+
+/* Expandable node styles */
+.expandable-node rect {
+    cursor: pointer;
+}
+
+.expandable-node:hover rect {
+    filter: brightness(1.05);
+}
+
+.expand-indicator circle {
+    transition: all var(--transition-base);
+}
+
+.expand-indicator:hover circle {
+    fill: #f0f9ff;
+    transform: scale(1.1);
+}
+
+/* Group-specific node styling */
+.group-discovery rect {
+    stroke: #f59e0b;
+}
+
+.group-trialPrep rect {
+    stroke: #dc2626;
+}
+
+.group-trial rect {
+    stroke: #ec4899;
+}
+
+.group-postTrial rect {
+    stroke: #6366f1;
+}
+
+.group-adr rect {
+    stroke: #22c55e;
+}
+
+/* Additional group styling for new tracks */
+.group-emergency rect {
+    stroke: #be123c;
+}
+
+.group-interlocutory rect {
+    stroke: #0d9488;
+}
+
+.group-thirdParty rect {
+    stroke: #7e22ce;
+}
+
+.group-daubert rect {
+    stroke: #b45309;
+}
+
+.group-fees rect {
+    stroke: #7c3aed;
+}
+
+.group-stay rect {
+    stroke: #0891b2;
+}
+
+.group-amendment rect {
+    stroke: #4f46e5;
+}
+
+.group-dismissal rect {
+    stroke: #64748b;
+}
+
+.group-complexity rect {
+    stroke: #0f766e;
+}
+
+.group-eDiscovery rect {
+    stroke: #d97706;
+}
+
 /* Tooltip */
 .tooltip {
     position: absolute;
@@ -444,6 +534,32 @@ button.secondary:hover {
     text-transform: uppercase;
     letter-spacing: 0.5px;
     margin-bottom: 2px;
+}
+
+.tooltip .notes {
+    background: rgba(251, 191, 36, 0.15);
+    padding: 8px;
+    border-radius: 4px;
+    border-left: 3px solid #fbbf24;
+    margin-top: 8px;
+}
+
+.tooltip .expandable-hint {
+    color: #60a5fa;
+    font-style: italic;
+    font-size: 10px;
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px dashed rgba(255, 255, 255, 0.2);
+}
+
+/* Parallel process indicator box */
+.parallel-indicator rect {
+    transition: all var(--transition-base);
+}
+
+.parallel-indicator:hover rect {
+    fill: rgba(34, 197, 94, 0.15);
 }
 
 /* Legend */
