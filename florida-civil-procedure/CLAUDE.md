@@ -165,11 +165,23 @@ Requires modern browser with:
 
 Tested on: Chrome 90+, Firefox 88+, Safari 14+, Edge 90+
 
+## Recent Improvements
+
+### Latest Changes (December 2025)
+- **MIME Type Fix**: Automatic correction of JavaScript/CSS MIME types during CDK deployment
+- **Deployment Infrastructure**: Complete AWS CDK implementation for automated deployment
+- **Enhanced Workflow**: Added comprehensive commercial litigation workflow tracks
+- **Trial Phase Detail**: Expanded visualization with detailed trial phase and decision branches
+- **Custom Domain**: Fully integrated `law.jamescmooney.com` with SSL/TLS certificate
+
+See git commit history for complete change log.
+
 ## Deployment Notes
 
 This application is **static-only** and optimized for AWS S3 + CloudFront:
 - No backend, no API, no database
 - All assets are frontend files (HTML, CSS, JS)
+- Currently deployed to: **`https://law.jamescmooney.com`**
 
 ### Deployment Options
 
@@ -178,16 +190,66 @@ This application is **static-only** and optimized for AWS S3 + CloudFront:
    - Automated deployment with `npm run deploy`
    - Creates S3 bucket, CloudFront distribution, ACM certificate, and Route 53 record
    - Automatic file sync and CloudFront invalidation
+   - Automatic MIME type correction for JS/CSS files
    - See `infrastructure/README.md` for full setup instructions
-   - Currently deployed to: `law.jamescmooney.com`
 
 2. **Manual Scripts** - `deploy.sh` and `deploy-subdomain.sh`
    - Legacy bash scripts for manual deployment
    - See `DEPLOYMENT.md` for AWS Console setup instructions
    - See `CUSTOM-DOMAIN.md` for custom domain configuration
+   - **Note**: Manual deployments may require MIME type fixes
 
-**Important**: The app requires ES6 module support. S3 must serve `.js` files with correct MIME type (`application/javascript`).
+**Important**: The app requires ES6 module support. S3 must serve `.js` files with correct MIME type (`application/javascript`). The CDK deployment handles this automatically.
+
+## Troubleshooting
+
+### JavaScript/CSS Files Not Loading (MIME Type Errors)
+
+**Issue**: Browser console shows errors like `'text/html' is not a valid JavaScript MIME type`
+
+**Root Cause**: S3 BucketDeployment doesn't always set correct content types for JS/CSS files
+
+**Solution**: The CDK deployment includes automatic MIME type correction. If issues persist:
+```bash
+cd infrastructure
+npm run fix-mime-types
+```
+
+### CloudFront Shows Old Content
+
+**Issue**: Website shows cached content after deployment
+
+**Solution**: CDK automatically invalidates cache during deployment. Manual invalidation:
+```bash
+aws cloudfront create-invalidation --distribution-id <ID> --paths "/*"
+```
+
+## File Structure
+
+```
+florida-civil-procedure/
+├── index.html              # Main application entry point
+├── css/
+│   └── styles.css         # All application styles (light/dark theme)
+├── js/
+│   ├── app.js            # Application initialization
+│   ├── chart.js          # D3.js visualization renderer
+│   ├── controls.js       # User interaction handling
+│   ├── data.js           # Workflow data and configuration
+│   └── utils.js          # Shared utilities
+├── infrastructure/        # AWS CDK deployment (TypeScript)
+│   ├── bin/              # CDK app entry point
+│   ├── lib/              # CDK stack definitions
+│   ├── scripts/          # Helper scripts (MIME type fixes)
+│   └── README.md         # Detailed CDK documentation
+├── deploy.sh             # Legacy manual deployment script
+├── deploy-subdomain.sh   # Legacy subdomain deployment script
+├── CLAUDE.md             # This file (AI assistant instructions)
+├── README.md             # User-facing documentation
+├── DEPLOYMENT.md         # Manual AWS setup guide
+└── CUSTOM-DOMAIN.md      # Domain configuration guide
+```
 
 ## Legal Disclaimer
 
-This visualization is based on Florida Rules of Civil Procedure and is for educational/planning purposes only. Data reflects rules as of November 2025. Always verify against current official rules and consult legal professionals for actual cases.
+This visualization is based on Florida Rules of Civil Procedure and is for educational/planning purposes only. Data reflects rules as of December 2025. Always verify against current official rules and consult legal professionals for actual cases.
