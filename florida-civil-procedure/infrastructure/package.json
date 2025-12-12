@@ -1,0 +1,35 @@
+{
+  "name": "florida-civil-procedure-infrastructure",
+  "version": "1.0.0",
+  "description": "AWS CDK infrastructure for Florida Civil Procedure visualization",
+  "main": "lib/florida-civil-procedure-stack.js",
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc -w",
+    "cdk": "cdk",
+    "synth": "cdk synth",
+    "deploy": "cdk deploy",
+    "diff": "cdk diff",
+    "destroy": "cdk destroy"
+  },
+  "keywords": [
+    "aws",
+    "cdk",
+    "cloudfront",
+    "s3",
+    "static-website"
+  ],
+  "author": "James Mooney",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "aws-cdk": "^2.116.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.3.3"
+  },
+  "dependencies": {
+    "aws-cdk-lib": "^2.116.0",
+    "constructs": "^10.3.0",
+    "source-map-support": "^0.5.21"
+  }
+}

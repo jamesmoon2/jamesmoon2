@@ -2197,11 +2197,11 @@ export const LINKS = [
 
 export const CONFIG = {
     chart: {
-        width: 4600,
-        height: 1100,
-        initialZoom: 0.35,
-        minZoom: 0.12,
-        maxZoom: 3
+        width: 3900,
+        height: 1200,
+        initialZoom: 0.75,
+        minZoom: 0.2,
+        maxZoom: 6
     },
     node: {
         width: 18,
