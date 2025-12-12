@@ -134,10 +134,11 @@ export class ChartRenderer {
      * Render parallel process indicator (mediation, settlement available any time)
      */
     renderParallelProcessIndicator() {
-        // Create a sidebar indicator showing parallel processes
+        // Create a centered indicator showing parallel processes
+        // Position it in the middle-upper area to avoid overlapping with workflow nodes
         const parallelBox = this.parallelGroup.append('g')
             .attr('class', 'parallel-indicator')
-            .attr('transform', 'translate(50, 100)');
+            .attr('transform', 'translate(1650, 80)');
 
         // Background
         parallelBox.append('rect')
@@ -233,6 +234,9 @@ export class ChartRenderer {
             const sourceHidden = !this.shouldRenderNode(sourceNode);
             const targetHidden = !this.shouldRenderNode(targetNode);
 
+            // Check if this is an exception link and exceptions are hidden
+            const isExceptionHidden = link.isException && !this.visibility.exceptions;
+
             const group = link.isException ? this.exceptionGroup : this.linkGroup;
             let pathClass = link.isException ? 'link exception-path' : 'link';
 
@@ -249,7 +253,7 @@ export class ChartRenderer {
                 .attr('d', generateCurvePath(sourceNode, targetNode))
                 .attr('stroke', link.isException ? '#dc2626' : (link.isParallel ? '#84cc16' : STAGE_COLORS[sourceNode.stage]))
                 .attr('stroke-width', Math.max(1, link.volume / 5))
-                .style('display', (sourceHidden || targetHidden) ? 'none' : 'block')
+                .style('display', (sourceHidden || targetHidden || isExceptionHidden) ? 'none' : 'block')
                 .on('mouseover', (event) => this.handleLinkHover(event, link, sourceNode, targetNode))
                 .on('mouseout', () => this.handleLinkOut());
         });
@@ -280,6 +284,8 @@ export class ChartRenderer {
         if (this.isNodeCollapsed(node)) return false;
         // Don't render if node's phase is hidden
         if (this.isNodePhaseHidden(node)) return false;
+        // Don't render exception nodes if exceptions layer is hidden
+        if (node.isException && !this.visibility.exceptions) return false;
         return true;
     }
 
@@ -336,31 +342,44 @@ export class ChartRenderer {
             this.renderExpandableIndicator(nodeGroup, node, rectHeight);
         }
 
+        // Calculate text positioning based on number of lines
+        const textX = node.isExpandable ? 30 : 24;
+        const isMultiLine = lines.length > 1;
+
+        // For single line: name centered, metadata below
+        // For multi-line: name takes up more space, push metadata down further
+        const nameStartY = isMultiLine ? -14 : -6;
+        const lineSpacing = 13;
+        const metadataStartY = isMultiLine ? 12 : 8;
+        const metadataSpacing = 11;
+
         // Node text (name)
         lines.forEach((line, i) => {
             nodeGroup.append('text')
-                .attr('x', node.isExpandable ? 30 : 24)
-                .attr('y', lines.length > 1 ? -12 + i * 12 : -4)
+                .attr('x', textX)
+                .attr('y', nameStartY + i * lineSpacing)
                 .attr('dy', '0.35em')
                 .style('font-size', '10px')
+                .style('font-weight', '600')
                 .text(line);
         });
 
-        // Rule reference
+        // Rule reference - using a more visible color (dark blue/teal)
         if (node.rule) {
             nodeGroup.append('text')
-                .attr('x', node.isExpandable ? 30 : 24)
-                .attr('y', lines.length > 1 ? 6 : 6)
+                .attr('x', textX)
+                .attr('y', metadataStartY)
                 .style('font-size', '8px')
-                .style('fill', '#64748b')
+                .style('fill', '#0369a1')
+                .style('font-weight', '500')
                 .text(node.rule);
         }
 
         // Duration
         if (node.duration && node.duration !== 'n/a') {
             nodeGroup.append('text')
-                .attr('x', node.isExpandable ? 30 : 24)
-                .attr('y', lines.length > 1 ? 16 : 16)
+                .attr('x', textX)
+                .attr('y', metadataStartY + metadataSpacing)
                 .style('font-size', '8px')
                 .style('fill', '#7c3aed')
                 .text(`⏱ ${node.duration}`);
@@ -369,20 +388,20 @@ export class ChartRenderer {
         // Cost
         if (node.cost && node.cost !== 'n/a') {
             nodeGroup.append('text')
-                .attr('x', node.isExpandable ? 30 : 24)
-                .attr('y', lines.length > 1 ? 26 : 26)
+                .attr('x', textX)
+                .attr('y', metadataStartY + metadataSpacing * 2)
                 .style('font-size', '8px')
                 .style('fill', '#059669')
                 .text(`💰 ${node.cost}`);
         }
 
-        // Owner
+        // Owner (positioned above the node)
         if (node.owner && node.owner !== 'n/a') {
             nodeGroup.append('text')
-                .attr('x', node.isExpandable ? 30 : 24)
+                .attr('x', textX)
                 .attr('y', -rectHeight / 2 - 4)
                 .style('font-size', '8px')
-                .style('fill', '#e11d48')
+                .style('fill', '#be123c')
                 .style('font-weight', '700')
                 .text(`👤 ${node.owner}`);
         }
@@ -474,13 +493,19 @@ export class ChartRenderer {
      * @param {number} rectHeight - Height of node rectangle
      */
     renderDocumentIcon(node, rectHeight) {
-        const { width, height, offsetY } = CONFIG.document;
+        const { width, height } = CONFIG.document;
+
+        // Position document icon below all the text content
+        // For multi-line nodes (rectHeight = 45), text ends around y + 30
+        // For single-line nodes (rectHeight = 28), text ends around y + 19
+        const isMultiLine = rectHeight > 30;
+        const iconOffsetY = isMultiLine ? 38 : 28;
 
         this.documentGroup.append('rect')
             .attr('class', 'document-icon')
             .attr('data-doc-id', node.id)
             .attr('x', node.x + 22)
-            .attr('y', node.y + rectHeight / 2 + offsetY)
+            .attr('y', node.y + iconOffsetY)
             .attr('width', width)
             .attr('height', height)
             .attr('rx', 2)
@@ -702,12 +727,26 @@ export class ChartRenderer {
      * Reset zoom to initial view
      */
     resetZoom() {
-        const { initialZoom } = CONFIG.chart;
+        const { initialZoom, width, height } = CONFIG.chart;
+        // Center on the early stages of litigation (around x=600, y=500)
+        // which shows Filing, Service, and Responsive Pleadings
+        const centerX = 600;
+        const centerY = 500;
+
+        // Get container dimensions
+        const containerRect = this.container.getBoundingClientRect();
+        const containerWidth = containerRect.width;
+        const containerHeight = containerRect.height;
+
+        // Calculate translation to center the target point
+        const translateX = containerWidth / 2 - centerX * initialZoom;
+        const translateY = containerHeight / 2 - centerY * initialZoom;
+
         this.svg.transition()
             .duration(750)
             .call(
                 this.zoom.transform,
-                d3.zoomIdentity.scale(initialZoom).translate(50, 50)
+                d3.zoomIdentity.translate(translateX, translateY).scale(initialZoom)
             );
     }
 
@@ -734,10 +773,24 @@ export class ChartRenderer {
      */
     applyInitialZoom() {
         const { initialZoom } = CONFIG.chart;
+        // Center on the early stages of litigation (around x=600, y=500)
+        // which shows Filing, Service, and Responsive Pleadings
+        const centerX = 600;
+        const centerY = 500;
+
         setTimeout(() => {
+            // Get container dimensions
+            const containerRect = this.container.getBoundingClientRect();
+            const containerWidth = containerRect.width;
+            const containerHeight = containerRect.height;
+
+            // Calculate translation to center the target point
+            const translateX = containerWidth / 2 - centerX * initialZoom;
+            const translateY = containerHeight / 2 - centerY * initialZoom;
+
             this.svg.call(
                 this.zoom.transform,
-                d3.zoomIdentity.scale(initialZoom).translate(50, 50)
+                d3.zoomIdentity.translate(translateX, translateY).scale(initialZoom)
             );
         }, 100);
     }

@@ -783,7 +783,7 @@ export const NODES = [
         name: "Expert\nDesignation",
         rule: "1.280(b)(5)",
         x: 1880,
-        y: 780,
+        y: 870,
         stage: "ExpertDisc",
         volume: 50,
         duration: "90d before trial",
@@ -896,7 +896,7 @@ export const NODES = [
         name: "Daubert\nMotion Filed",
         rule: "90.702",
         x: 2040,
-        y: 780,
+        y: 870,
         stage: "Daubert",
         volume: 30,
         duration: "60d before trial",
@@ -913,7 +913,7 @@ export const NODES = [
         name: "Daubert\nHearing",
         rule: "90.702",
         x: 2200,
-        y: 780,
+        y: 870,
         stage: "Daubert",
         volume: 25,
         duration: "30-45d before trial",
@@ -931,7 +931,7 @@ export const NODES = [
         name: "Expert\nExcluded/Admitted",
         rule: "90.702",
         x: 2360,
-        y: 780,
+        y: 870,
         stage: "Daubert",
         volume: 25,
         duration: "Immediate",
@@ -2330,9 +2330,9 @@ export const CONFIG = {
     chart: {
         width: 3900,
         height: 1200,
-        initialZoom: 0.75,
+        initialZoom: 0.9,
         minZoom: 0.2,
-        maxZoom: 6
+        maxZoom: 10
     },
     node: {
         width: 18,
