@@ -364,15 +364,28 @@ export class ChartRenderer {
                 .text(line);
         });
 
-        // Rule reference - using a more visible color (dark blue/teal)
+        // Rule reference - clickable link to Florida Bar rules
         if (node.rule) {
-            nodeGroup.append('text')
+            const ruleLink = nodeGroup.append('a')
+                .attr('href', this.getRuleUrl(node.rule))
+                .attr('target', '_blank')
+                .attr('rel', 'noopener noreferrer');
+
+            ruleLink.append('text')
                 .attr('x', textX)
                 .attr('y', metadataStartY)
                 .style('font-size', '8px')
                 .style('fill', '#0369a1')
                 .style('font-weight', '500')
-                .text(node.rule);
+                .style('cursor', 'pointer')
+                .style('text-decoration', 'underline')
+                .text(node.rule)
+                .on('mouseover', function() {
+                    d3.select(this).style('fill', '#0284c7');
+                })
+                .on('mouseout', function() {
+                    d3.select(this).style('fill', '#0369a1');
+                });
         }
 
         // Duration
@@ -414,12 +427,15 @@ export class ChartRenderer {
 
     /**
      * Render expandable indicator (plus/minus button)
+     * Rendered in expandableGroup layer to appear above decision diamonds
      */
     renderExpandableIndicator(nodeGroup, node, rectHeight) {
         const isExpanded = this.groupExpansion[node.expandsGroup];
-        const indicator = nodeGroup.append('g')
+        // Use expandableGroup (above decisionGroup) so + signs aren't covered by diamonds
+        const indicator = this.expandableGroup.append('g')
             .attr('class', 'expand-indicator')
-            .attr('transform', `translate(6, 0)`)
+            .attr('data-node-id', node.id)
+            .attr('transform', `translate(${node.x + 6}, ${node.y})`)
             .style('cursor', 'pointer')
             .on('click', (event) => {
                 event.stopPropagation();
@@ -579,6 +595,62 @@ export class ChartRenderer {
      */
     hideTooltip() {
         this.tooltip.style.opacity = '0';
+    }
+
+    /**
+     * Get URL for a Florida rule citation
+     * Maps rule numbers to appropriate Florida Bar or statute URLs
+     * @param {string} rule - Rule citation (e.g., "1.100", "90.702", "768.79", "9.110")
+     * @returns {string} - URL to the rule
+     */
+    getRuleUrl(rule) {
+        if (!rule) return '#';
+
+        // Florida Rules of Civil Procedure (1.xxx)
+        if (/^1\.\d+/.test(rule)) {
+            return `https://www.floridabar.org/rules/rrtfb/civ-rules/`;
+        }
+
+        // Florida Evidence Code (90.xxx or Ch. 90)
+        if (/^90\.\d+/.test(rule) || rule.includes('Ch. 90')) {
+            return `https://www.flsenate.gov/Laws/Statutes/2024/Chapter90`;
+        }
+
+        // Florida Rules of Appellate Procedure (9.xxx)
+        if (/^9\.\d+/.test(rule)) {
+            return `https://www.floridabar.org/rules/rrtfb/app-rules/`;
+        }
+
+        // Florida Statutes - specific sections (xxx.xx format like 768.79, 57.105)
+        if (/^\d+\.\d+/.test(rule)) {
+            const sectionMatch = rule.match(/^(\d+)\.(\d+)/);
+            if (sectionMatch) {
+                return `https://www.flsenate.gov/Laws/Statutes/2024/${sectionMatch[1]}.${sectionMatch[2]}`;
+            }
+        }
+
+        // Florida Statutes - chapter reference (Ch. xx)
+        if (/^Ch\.\s*\d+/.test(rule)) {
+            const chapterMatch = rule.match(/^Ch\.\s*(\d+)/);
+            if (chapterMatch) {
+                return `https://www.flsenate.gov/Laws/Statutes/2024/Chapter${chapterMatch[1]}`;
+            }
+        }
+
+        // Combined rule/statute references (like "768.79/1.442")
+        if (rule.includes('/')) {
+            const parts = rule.split('/');
+            // Link to the first rule mentioned
+            return this.getRuleUrl(parts[0].trim());
+        }
+
+        // Admin Order or other - link to Florida Courts
+        if (rule.includes('Admin')) {
+            return `https://www.flcourts.gov/Resources/Administrative-Orders`;
+        }
+
+        // Default - Florida Bar civil procedure rules
+        return `https://www.floridabar.org/rules/rrtfb/civ-rules/`;
     }
 
     /**
