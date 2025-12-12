@@ -366,12 +366,9 @@ export class ChartRenderer {
 
         // Rule reference - clickable link to Florida Bar rules
         if (node.rule) {
-            const ruleLink = nodeGroup.append('a')
-                .attr('href', this.getRuleUrl(node.rule))
-                .attr('target', '_blank')
-                .attr('rel', 'noopener noreferrer');
-
-            ruleLink.append('text')
+            const ruleUrl = this.getRuleUrl(node.rule);
+            nodeGroup.append('text')
+                .attr('class', 'rule-link')
                 .attr('x', textX)
                 .attr('y', metadataStartY)
                 .style('font-size', '8px')
@@ -385,6 +382,10 @@ export class ChartRenderer {
                 })
                 .on('mouseout', function() {
                     d3.select(this).style('fill', '#0369a1');
+                })
+                .on('click', function(event) {
+                    event.stopPropagation();
+                    window.open(ruleUrl, '_blank', 'noopener,noreferrer');
                 });
         }
 
@@ -599,58 +600,13 @@ export class ChartRenderer {
 
     /**
      * Get URL for a Florida rule citation
-     * Maps rule numbers to appropriate Florida Bar or statute URLs
+     * Links to the official Florida Bar Rules of Civil Procedure PDF
      * @param {string} rule - Rule citation (e.g., "1.100", "90.702", "768.79", "9.110")
-     * @returns {string} - URL to the rule
+     * @returns {string} - URL to the rules PDF
      */
     getRuleUrl(rule) {
-        if (!rule) return '#';
-
-        // Florida Rules of Civil Procedure (1.xxx)
-        if (/^1\.\d+/.test(rule)) {
-            return `https://www.floridabar.org/rules/rrtfb/civ-rules/`;
-        }
-
-        // Florida Evidence Code (90.xxx or Ch. 90)
-        if (/^90\.\d+/.test(rule) || rule.includes('Ch. 90')) {
-            return `https://www.flsenate.gov/Laws/Statutes/2024/Chapter90`;
-        }
-
-        // Florida Rules of Appellate Procedure (9.xxx)
-        if (/^9\.\d+/.test(rule)) {
-            return `https://www.floridabar.org/rules/rrtfb/app-rules/`;
-        }
-
-        // Florida Statutes - specific sections (xxx.xx format like 768.79, 57.105)
-        if (/^\d+\.\d+/.test(rule)) {
-            const sectionMatch = rule.match(/^(\d+)\.(\d+)/);
-            if (sectionMatch) {
-                return `https://www.flsenate.gov/Laws/Statutes/2024/${sectionMatch[1]}.${sectionMatch[2]}`;
-            }
-        }
-
-        // Florida Statutes - chapter reference (Ch. xx)
-        if (/^Ch\.\s*\d+/.test(rule)) {
-            const chapterMatch = rule.match(/^Ch\.\s*(\d+)/);
-            if (chapterMatch) {
-                return `https://www.flsenate.gov/Laws/Statutes/2024/Chapter${chapterMatch[1]}`;
-            }
-        }
-
-        // Combined rule/statute references (like "768.79/1.442")
-        if (rule.includes('/')) {
-            const parts = rule.split('/');
-            // Link to the first rule mentioned
-            return this.getRuleUrl(parts[0].trim());
-        }
-
-        // Admin Order or other - link to Florida Courts
-        if (rule.includes('Admin')) {
-            return `https://www.flcourts.gov/Resources/Administrative-Orders`;
-        }
-
-        // Default - Florida Bar civil procedure rules
-        return `https://www.floridabar.org/rules/rrtfb/civ-rules/`;
+        // All rules link to the official Florida Bar Civil Procedure Rules PDF
+        return 'https://www-media.floridabar.org/uploads/2025/11/Civil-Procedure-Rules-06-19-25.pdf';
     }
 
     /**

@@ -499,6 +499,12 @@ button.secondary:hover {
     pointer-events: none;
 }
 
+/* Rule links should be clickable */
+.node text.rule-link {
+    pointer-events: auto;
+    cursor: pointer;
+}
+
 .decision-diamond {
     fill: #fbbf24;
     stroke: #f59e0b;
