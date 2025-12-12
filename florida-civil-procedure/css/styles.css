@@ -215,6 +215,154 @@ button.secondary:hover {
     accent-color: var(--primary-blue);
 }
 
+/* Phase Filters */
+.phase-filters {
+    margin-bottom: 20px;
+    padding: 16px 20px;
+    background: var(--bg-secondary);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border-color);
+}
+
+.phase-filters-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.phase-filters-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.phase-filters-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.phase-action-btn {
+    padding: 4px 12px;
+    font-size: 12px;
+    background: var(--bg-primary);
+    color: var(--text-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.phase-action-btn:hover {
+    background: var(--primary-blue);
+    color: white;
+    border-color: var(--primary-blue);
+    transform: none;
+    box-shadow: none;
+}
+
+.phase-toggles {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.phase-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    background: var(--bg-primary);
+    color: var(--text-secondary);
+    border: 2px solid var(--border-color);
+    border-radius: var(--radius-md);
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all var(--transition-base);
+    box-shadow: none;
+}
+
+.phase-toggle:hover {
+    border-color: var(--primary-blue);
+    color: var(--text-primary);
+    transform: none;
+    box-shadow: var(--shadow-sm);
+}
+
+.phase-toggle.active {
+    background: var(--primary-blue);
+    color: white;
+    border-color: var(--primary-blue);
+}
+
+.phase-toggle.active:hover {
+    background: var(--primary-blue-dark);
+    border-color: var(--primary-blue-dark);
+}
+
+.phase-toggle-icon {
+    font-size: 14px;
+    line-height: 1;
+}
+
+.phase-toggle-name {
+    font-weight: 600;
+}
+
+.phase-toggle-count {
+    background: rgba(0, 0, 0, 0.1);
+    padding: 2px 6px;
+    border-radius: 10px;
+    font-size: 10px;
+    font-weight: 700;
+    min-width: 20px;
+    text-align: center;
+}
+
+.phase-toggle.active .phase-toggle-count {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+/* Responsive phase filters */
+@media (max-width: 768px) {
+    .phase-filters-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    .phase-toggles {
+        gap: 6px;
+    }
+
+    .phase-toggle {
+        padding: 6px 10px;
+        font-size: 11px;
+    }
+
+    .phase-toggle-icon {
+        font-size: 12px;
+    }
+}
+
+@media (max-width: 480px) {
+    .phase-toggle {
+        flex: 1 1 calc(50% - 4px);
+        justify-content: center;
+    }
+
+    .phase-toggle-name {
+        display: none;
+    }
+
+    .phase-toggle-count {
+        display: none;
+    }
+}
+
 /* Search */
 .search-container {
     position: relative;

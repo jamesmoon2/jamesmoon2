@@ -79,32 +79,33 @@ npx serve
 # Then open http://localhost:8000
 ```
 
-### ☁️ Cloud Deployment (AWS S3)
+### ☁️ Cloud Deployment (AWS)
 
-This application is **perfect for S3 static website hosting**!
+This application is **deployed using AWS CDK** for automated infrastructure management.
 
-**Quick Deploy:**
+**Recommended: AWS CDK Deployment**
 ```bash
-cd florida-civil-procedure
-./deploy.sh your-bucket-name us-east-1
+cd infrastructure
+npm install          # First time only
+npm run deploy       # Deploy everything (infrastructure + files)
 ```
 
-**Manual Deploy:**
-```bash
-# Upload to S3
-aws s3 sync . s3://your-bucket-name --delete
+The CDK deployment automatically:
+- Creates and configures S3 bucket
+- Sets up CloudFront distribution with SSL/TLS
+- Manages custom domain and Route 53 records
+- Handles MIME types correctly for ES6 modules
+- Invalidates CloudFront cache on updates
 
-# Enable static website hosting
-aws s3 website s3://your-bucket-name --index-document index.html
-```
+See `infrastructure/README.md` for detailed setup instructions.
 
-**Complete deployment guide:** See [DEPLOYMENT.md](DEPLOYMENT.md) for:
-- Step-by-step AWS Console instructions
-- CloudFront CDN setup for HTTPS
-- Custom domain configuration
-- CI/CD with GitHub Actions
-- Cost estimates ($0.50-$5/month)
-- Security best practices
+**Legacy Manual Deployment** (archived)
+Legacy deployment scripts and guides are available in `docs/archive/`:
+- `docs/archive/deploy.sh` - Basic S3 deployment script
+- `docs/archive/DEPLOYMENT.md` - Manual AWS Console setup guide
+- `docs/archive/CUSTOM-DOMAIN.md` - Custom domain configuration
+
+Note: Manual deployments may require additional MIME type configuration.
 
 ## 🎮 Usage
 

@@ -4,7 +4,7 @@
  * Enhanced with expandable node groups and parallel process indicators
  */
 
-import { NODES, LINKS, STAGE_COLORS, CONFIG, NODE_GROUPS, PARALLEL_PROCESSES } from './data.js';
+import { NODES, LINKS, STAGE_COLORS, CONFIG, NODE_GROUPS, PARALLEL_PROCESSES, PHASE_GROUPS } from './data.js';
 import {
     generateCurvePath,
     formatTooltip,
@@ -36,6 +36,20 @@ export class ChartRenderer {
             exceptions: true,
             parallelProcesses: true
         };
+
+        // Phase visibility state - all phases enabled by default
+        this.phaseVisibility = {};
+        Object.keys(PHASE_GROUPS).forEach(key => {
+            this.phaseVisibility[key] = PHASE_GROUPS[key].enabled;
+        });
+
+        // Build stage-to-phase lookup for efficient filtering
+        this.stageToPhase = {};
+        Object.entries(PHASE_GROUPS).forEach(([phaseId, phase]) => {
+            phase.stages.forEach(stage => {
+                this.stageToPhase[stage] = phaseId;
+            });
+        });
 
         // Node group expansion state
         this.groupExpansion = {};
@@ -215,9 +229,9 @@ export class ChartRenderer {
                 return;
             }
 
-            // Check if this link involves collapsed nodes
-            const sourceCollapsed = this.isNodeCollapsed(sourceNode);
-            const targetCollapsed = this.isNodeCollapsed(targetNode);
+            // Check if this link involves collapsed or hidden nodes
+            const sourceHidden = !this.shouldRenderNode(sourceNode);
+            const targetHidden = !this.shouldRenderNode(targetNode);
 
             const group = link.isException ? this.exceptionGroup : this.linkGroup;
             let pathClass = link.isException ? 'link exception-path' : 'link';
@@ -235,7 +249,7 @@ export class ChartRenderer {
                 .attr('d', generateCurvePath(sourceNode, targetNode))
                 .attr('stroke', link.isException ? '#dc2626' : (link.isParallel ? '#84cc16' : STAGE_COLORS[sourceNode.stage]))
                 .attr('stroke-width', Math.max(1, link.volume / 5))
-                .style('display', (sourceCollapsed || targetCollapsed) ? 'none' : 'block')
+                .style('display', (sourceHidden || targetHidden) ? 'none' : 'block')
                 .on('mouseover', (event) => this.handleLinkHover(event, link, sourceNode, targetNode))
                 .on('mouseout', () => this.handleLinkOut());
         });
@@ -250,12 +264,32 @@ export class ChartRenderer {
     }
 
     /**
+     * Check if a node's phase is currently hidden
+     */
+    isNodePhaseHidden(node) {
+        const phaseId = this.stageToPhase[node.stage];
+        if (!phaseId) return false;
+        return !this.phaseVisibility[phaseId];
+    }
+
+    /**
+     * Check if a node should be rendered (considering both group collapse and phase visibility)
+     */
+    shouldRenderNode(node) {
+        // Don't render if node is in a collapsed group
+        if (this.isNodeCollapsed(node)) return false;
+        // Don't render if node's phase is hidden
+        if (this.isNodePhaseHidden(node)) return false;
+        return true;
+    }
+
+    /**
      * Render all nodes
      */
     renderNodes() {
         NODES.forEach(node => {
-            // Skip rendering if node is in a collapsed group
-            if (this.isNodeCollapsed(node)) {
+            // Skip rendering if node shouldn't be shown
+            if (!this.shouldRenderNode(node)) {
                 return;
             }
             this.renderNode(node);
@@ -592,6 +626,59 @@ export class ChartRenderer {
                 this.parallelGroup.style('display', display);
                 break;
         }
+    }
+
+    /**
+     * Toggle visibility of a phase
+     * @param {string} phaseId - Phase identifier
+     */
+    togglePhase(phaseId) {
+        if (this.phaseVisibility.hasOwnProperty(phaseId)) {
+            this.phaseVisibility[phaseId] = !this.phaseVisibility[phaseId];
+            this.refresh();
+        }
+    }
+
+    /**
+     * Set visibility of a specific phase
+     * @param {string} phaseId - Phase identifier
+     * @param {boolean} visible - Whether the phase should be visible
+     */
+    setPhaseVisibility(phaseId, visible) {
+        if (this.phaseVisibility.hasOwnProperty(phaseId)) {
+            this.phaseVisibility[phaseId] = visible;
+            this.refresh();
+        }
+    }
+
+    /**
+     * Set visibility of all phases at once
+     * @param {boolean} visible - Whether all phases should be visible
+     */
+    setAllPhasesVisibility(visible) {
+        Object.keys(this.phaseVisibility).forEach(key => {
+            this.phaseVisibility[key] = visible;
+        });
+        this.refresh();
+    }
+
+    /**
+     * Get current phase visibility state
+     * @returns {Object} - Map of phase IDs to visibility state
+     */
+    getPhaseVisibility() {
+        return { ...this.phaseVisibility };
+    }
+
+    /**
+     * Get count of visible nodes for a phase
+     * @param {string} phaseId - Phase identifier
+     * @returns {number} - Count of visible nodes
+     */
+    getPhaseNodeCount(phaseId) {
+        const phase = PHASE_GROUPS[phaseId];
+        if (!phase) return 0;
+        return NODES.filter(node => phase.stages.includes(node.stage)).length;
     }
 
     /**

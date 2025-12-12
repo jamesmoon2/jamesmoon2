@@ -3,7 +3,7 @@
  * Handles user interactions, search, export, and UI controls
  */
 
-import { NODES } from './data.js';
+import { NODES, PHASE_GROUPS } from './data.js';
 import {
     debounce,
     searchNodes,
@@ -22,6 +22,7 @@ export class ControlsManager {
 
         this.setupEventListeners();
         this.setupKeyboardShortcuts();
+        this.setupPhaseFilters();
         this.updateStatistics();
     }
 
@@ -250,6 +251,74 @@ export class ControlsManager {
                 </div>
             `;
         }
+    }
+
+    /**
+     * Setup phase filter toggles
+     */
+    setupPhaseFilters() {
+        const phaseTogglesContainer = document.getElementById('phaseToggles');
+        if (!phaseTogglesContainer) return;
+
+        // Render phase toggle buttons
+        const phaseVisibility = this.chart.getPhaseVisibility();
+
+        Object.entries(PHASE_GROUPS).forEach(([phaseId, phase]) => {
+            const nodeCount = this.chart.getPhaseNodeCount(phaseId);
+            const isActive = phaseVisibility[phaseId];
+
+            const toggle = document.createElement('button');
+            toggle.className = `phase-toggle ${isActive ? 'active' : ''}`;
+            toggle.dataset.phaseId = phaseId;
+            toggle.setAttribute('aria-pressed', isActive);
+            toggle.setAttribute('aria-label', `${phase.name}: ${phase.description}`);
+            toggle.title = phase.description;
+
+            toggle.innerHTML = `
+                <span class="phase-toggle-icon">${phase.icon}</span>
+                <span class="phase-toggle-name">${phase.shortName}</span>
+                <span class="phase-toggle-count">${nodeCount}</span>
+            `;
+
+            toggle.addEventListener('click', () => {
+                this.handlePhaseToggle(phaseId, toggle);
+            });
+
+            phaseTogglesContainer.appendChild(toggle);
+        });
+
+        // Setup "All" and "None" buttons
+        document.getElementById('showAllPhases')?.addEventListener('click', () => {
+            this.setAllPhasesVisible(true);
+        });
+
+        document.getElementById('hideAllPhases')?.addEventListener('click', () => {
+            this.setAllPhasesVisible(false);
+        });
+    }
+
+    /**
+     * Handle phase toggle click
+     */
+    handlePhaseToggle(phaseId, toggleElement) {
+        this.chart.togglePhase(phaseId);
+
+        const isActive = this.chart.getPhaseVisibility()[phaseId];
+        toggleElement.classList.toggle('active', isActive);
+        toggleElement.setAttribute('aria-pressed', isActive);
+    }
+
+    /**
+     * Set all phases visible or hidden
+     */
+    setAllPhasesVisible(visible) {
+        this.chart.setAllPhasesVisibility(visible);
+
+        // Update all toggle button states
+        document.querySelectorAll('.phase-toggle').forEach(toggle => {
+            toggle.classList.toggle('active', visible);
+            toggle.setAttribute('aria-pressed', visible);
+        });
     }
 
     /**

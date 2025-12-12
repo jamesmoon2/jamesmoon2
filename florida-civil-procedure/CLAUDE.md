@@ -30,13 +30,14 @@ npm install          # First time only
 npm run deploy       # Deploy everything (infrastructure + files)
 ```
 
-**Alternative: Manual Deployment Scripts**
+**Alternative: Manual Deployment Scripts (Archived)**
+Legacy deployment scripts have been moved to `docs/archive/` for reference:
 ```bash
 # Deploy to AWS S3 (requires AWS CLI configured)
-./deploy.sh your-bucket-name us-east-1
+./docs/archive/deploy.sh your-bucket-name us-east-1
 
 # Deploy to subdomain
-./deploy-subdomain.sh your-bucket-name us-east-1 florida-civil-procedure.yourdomain.com
+./docs/archive/deploy-subdomain.sh your-bucket-name us-east-1 florida-civil-procedure.yourdomain.com
 ```
 
 ### Testing & Quality
@@ -193,10 +194,10 @@ This application is **static-only** and optimized for AWS S3 + CloudFront:
    - Automatic MIME type correction for JS/CSS files
    - See `infrastructure/README.md` for full setup instructions
 
-2. **Manual Scripts** - `deploy.sh` and `deploy-subdomain.sh`
+2. **Manual Scripts (Archived)** - `docs/archive/deploy.sh` and `docs/archive/deploy-subdomain.sh`
    - Legacy bash scripts for manual deployment
-   - See `DEPLOYMENT.md` for AWS Console setup instructions
-   - See `CUSTOM-DOMAIN.md` for custom domain configuration
+   - See `docs/archive/DEPLOYMENT.md` for AWS Console setup instructions
+   - See `docs/archive/CUSTOM-DOMAIN.md` for custom domain configuration
    - **Note**: Manual deployments may require MIME type fixes
 
 **Important**: The app requires ES6 module support. S3 must serve `.js` files with correct MIME type (`application/javascript`). The CDK deployment handles this automatically.
@@ -242,12 +243,16 @@ florida-civil-procedure/
 │   ├── lib/              # CDK stack definitions
 │   ├── scripts/          # Helper scripts (MIME type fixes)
 │   └── README.md         # Detailed CDK documentation
-├── deploy.sh             # Legacy manual deployment script
-├── deploy-subdomain.sh   # Legacy subdomain deployment script
+├── docs/                 # Documentation
+│   └── archive/          # Legacy documentation and scripts
+│       ├── deploy.sh             # Legacy manual deployment script
+│       ├── deploy-subdomain.sh   # Legacy subdomain deployment script
+│       ├── DEPLOYMENT.md         # Manual AWS setup guide
+│       ├── CUSTOM-DOMAIN.md      # Domain configuration guide
+│       ├── QUICKSTART-jamescmooney.md  # User-specific quick start (outdated)
+│       └── bucket-policy.example.json  # Example S3 bucket policy
 ├── CLAUDE.md             # This file (AI assistant instructions)
-├── README.md             # User-facing documentation
-├── DEPLOYMENT.md         # Manual AWS setup guide
-└── CUSTOM-DOMAIN.md      # Domain configuration guide
+└── README.md             # User-facing documentation
 ```
 
 ## Legal Disclaimer

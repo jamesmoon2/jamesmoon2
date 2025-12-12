@@ -74,7 +74,7 @@
                 </div>
             </div>
 
-            <!-- Filters -->
+            <!-- Layer Filters -->
             <div class="filter-group">
                 <input
                     type="checkbox"
@@ -105,6 +105,20 @@
                 <label for="showExc">⚠️ Exceptions</label>
             </div>
         </nav>
+
+        <!-- Phase Filters -->
+        <div class="phase-filters" role="region" aria-label="Litigation Phase Filters">
+            <div class="phase-filters-header">
+                <span class="phase-filters-title">Filter by Phase:</span>
+                <div class="phase-filters-actions">
+                    <button id="showAllPhases" class="phase-action-btn" aria-label="Show all phases">All</button>
+                    <button id="hideAllPhases" class="phase-action-btn" aria-label="Hide all phases">None</button>
+                </div>
+            </div>
+            <div class="phase-toggles" id="phaseToggles">
+                <!-- Phase toggles will be populated by JavaScript -->
+            </div>
+        </div>
 
         <!-- Main Chart -->
         <main>

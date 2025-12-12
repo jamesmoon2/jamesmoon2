@@ -10,6 +10,137 @@
  * - Florida Evidence Code (Ch. 90)
  */
 
+/**
+ * Phase Groups - High-level litigation phase filters
+ * Each phase contains multiple stages that can be toggled together
+ */
+export const PHASE_GROUPS = {
+    pleadings: {
+        id: "pleadings",
+        name: "Pleadings",
+        shortName: "Pleadings",
+        description: "Filing through Answer",
+        stages: ["Filing", "Service", "ServiceIssue", "Responsive", "Amendment", "Dismissal"],
+        icon: "📋",
+        enabled: true
+    },
+    caseManagement: {
+        id: "caseManagement",
+        name: "Case Management",
+        shortName: "Case Mgmt",
+        description: "Case management and complexity tracks",
+        stages: ["CaseMgmt", "ComplexLit"],
+        icon: "📊",
+        enabled: true
+    },
+    adr: {
+        id: "adr",
+        name: "ADR & Settlement",
+        shortName: "ADR",
+        description: "Mediation, arbitration, and settlement",
+        stages: ["ADR", "Arbitration", "Settlement", "Resolution"],
+        icon: "🤝",
+        enabled: true
+    },
+    discovery: {
+        id: "discovery",
+        name: "Discovery",
+        shortName: "Discovery",
+        description: "Discovery tools, disputes, and e-discovery",
+        stages: ["Discovery", "DiscTools", "DiscMotions", "EDiscovery"],
+        icon: "🔍",
+        enabled: true
+    },
+    experts: {
+        id: "experts",
+        name: "Experts & Daubert",
+        shortName: "Experts",
+        description: "Expert designation and Daubert challenges",
+        stages: ["ExpertDisc", "Daubert"],
+        icon: "🎓",
+        enabled: true
+    },
+    trial: {
+        id: "trial",
+        name: "Trial Track",
+        shortName: "Trial",
+        description: "Pretrial, trial prep, and trial phases",
+        stages: ["PreTrial", "TrialPrep", "Trial", "TrialPhase"],
+        icon: "⚖️",
+        enabled: true
+    },
+    postJudgment: {
+        id: "postJudgment",
+        name: "Post-Judgment",
+        shortName: "Post-Judg",
+        description: "Post-trial motions, fees, and enforcement",
+        stages: ["PostTrial", "Fees", "Enforce"],
+        icon: "📜",
+        enabled: true
+    },
+    appeals: {
+        id: "appeals",
+        name: "Appeals",
+        shortName: "Appeals",
+        description: "Appeals, interlocutory review, and stays",
+        stages: ["Appeal", "Interlocutory", "Stay"],
+        icon: "🏛️",
+        enabled: true
+    },
+    emergency: {
+        id: "emergency",
+        name: "Emergency Relief",
+        shortName: "Emergency",
+        description: "TRO and preliminary injunctions",
+        stages: ["Emergency", "Injunction"],
+        icon: "🚨",
+        enabled: true
+    },
+    thirdParty: {
+        id: "thirdParty",
+        name: "Third-Party",
+        shortName: "3rd Party",
+        description: "Impleader, cross-claims, interpleader",
+        stages: ["ThirdParty"],
+        icon: "👥",
+        enabled: true
+    }
+};
+
+/**
+ * Get all stages for a given phase
+ */
+export function getStagesForPhase(phaseId) {
+    const phase = PHASE_GROUPS[phaseId];
+    return phase ? phase.stages : [];
+}
+
+/**
+ * Get the phase that contains a given stage
+ */
+export function getPhaseForStage(stageName) {
+    for (const [phaseId, phase] of Object.entries(PHASE_GROUPS)) {
+        if (phase.stages.includes(stageName)) {
+            return phaseId;
+        }
+    }
+    return null;
+}
+
+/**
+ * Get nodes filtered by enabled phases
+ */
+export function getNodesByPhases(enabledPhases) {
+    const enabledStages = new Set();
+    for (const phaseId of enabledPhases) {
+        const phase = PHASE_GROUPS[phaseId];
+        if (phase) {
+            phase.stages.forEach(stage => enabledStages.add(stage));
+        }
+    }
+    return NODES.filter(node => enabledStages.has(node.stage));
+}
+
 export const STAGE_COLORS = {
     Filing: "#3b82f6",
     Service: "#0891b2",
