@@ -308,3 +308,77 @@ export function getShortcutsHTML() {
         </div>
     `;
 }
+
+/**
+ * Calculate cost estimates from selected nodes
+ * @param {Array} nodes - Array of selected node objects
+ * @param {number} hourlyRate - Attorney hourly rate (0 if not enabled)
+ * @returns {Object} Cost estimates with min/max values
+ */
+export function calculateCostEstimates(nodes, hourlyRate = 0) {
+    let hoursMin = 0;
+    let hoursMax = 0;
+    let fixedCostsMin = 0;
+    let fixedCostsMax = 0;
+    let daysMin = 0;
+    let daysMax = 0;
+
+    nodes.forEach(node => {
+        // Attorney hours
+        hoursMin += node.attorneyHoursMin || 0;
+        hoursMax += node.attorneyHoursMax || 0;
+
+        // Fixed costs (filing fees, service fees, etc.)
+        if (node.fixedCosts && Array.isArray(node.fixedCosts)) {
+            node.fixedCosts.forEach(cost => {
+                fixedCostsMin += cost.amountMin || cost.amount || 0;
+                fixedCostsMax += cost.amountMax || cost.amount || 0;
+            });
+        }
+
+        // Duration in days
+        daysMin += node.durationDaysMin || 0;
+        daysMax += node.durationDaysMax || 0;
+    });
+
+    // Calculate attorney fees based on hourly rate
+    const attorneyFeesMin = hoursMin * hourlyRate;
+    const attorneyFeesMax = hoursMax * hourlyRate;
+
+    // Calculate grand totals
+    const totalMin = fixedCostsMin + attorneyFeesMin;
+    const totalMax = fixedCostsMax + attorneyFeesMax;
+
+    return {
+        hoursMin,
+        hoursMax,
+        fixedCostsMin,
+        fixedCostsMax,
+        daysMin,
+        daysMax,
+        attorneyFeesMin,
+        attorneyFeesMax,
+        totalMin,
+        totalMax
+    };
+}
+
+/**
+ * Format currency value or range for display
+ * @param {number} min - Minimum value
+ * @param {number} max - Maximum value (optional, defaults to min)
+ * @returns {string} Formatted currency string
+ */
+export function formatCurrency(min, max = min) {
+    const formatter = new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'USD',
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0
+    });
+
+    if (min === max || max === undefined) {
+        return formatter.format(min);
+    }
+    return `${formatter.format(min)} - ${formatter.format(max)}`;
+}

@@ -184,8 +184,8 @@ export const NODE_GROUPS = {
         id: "discovery-group",
         name: "Discovery Phase",
         parentNodeId: 14,
-        childNodeIds: [15, 16, 40, 41, 42],
-        expanded: true,
+        childNodeIds: [15, 16, 40, 41, 42, 17, 18, 102],
+        expanded: false,
         color: "#f59e0b"
     },
     eDiscovery: {
@@ -201,7 +201,7 @@ export const NODE_GROUPS = {
         name: "Pretrial Preparation",
         parentNodeId: 24,
         childNodeIds: [50, 51, 52, 53],
-        expanded: true,
+        expanded: false,
         color: "#dc2626"
     },
     trial: {
@@ -209,7 +209,7 @@ export const NODE_GROUPS = {
         name: "Trial Phase",
         parentNodeId: 26,
         childNodeIds: [60, 61, 62, 63, 64, 65, 66],
-        expanded: true,
+        expanded: false,
         color: "#ec4899"
     },
     postTrial: {
@@ -217,7 +217,7 @@ export const NODE_GROUPS = {
         name: "Post-Trial Motions",
         parentNodeId: 28,
         childNodeIds: [29, 70, 71, 72],
-        expanded: true,
+        expanded: false,
         color: "#6366f1"
     },
     adr: {
@@ -225,7 +225,7 @@ export const NODE_GROUPS = {
         name: "ADR Options",
         parentNodeId: 11,
         childNodeIds: [12, 80, 81],
-        expanded: true,
+        expanded: false,
         color: "#22c55e"
     },
     emergency: {
@@ -233,7 +233,7 @@ export const NODE_GROUPS = {
         name: "Emergency Relief",
         parentNodeId: 110,
         childNodeIds: [111, 112, 113, 114, 115],
-        expanded: true,
+        expanded: false,
         color: "#be123c"
     },
     interlocutory: {
@@ -366,7 +366,7 @@ export const NODES = [
         id: 0,
         name: "Complaint\nFiled",
         rule: "1.100",
-        x: 100,
+        x: 50,
         y: 600,
         stage: "Filing",
         volume: 100,
@@ -378,7 +378,13 @@ export const NODES = [
         deadline: "flexible",
         isExpandable: true,
         expandsGroup: "dismissal",
-        notes: "Statute of limitations must be checked before filing. Consider voluntary dismissal options."
+        notes: "Statute of limitations must be checked before filing. Consider voluntary dismissal options.",
+        // Structured cost data for estimator
+        attorneyHoursMin: 2,
+        attorneyHoursMax: 5,
+        fixedCosts: [{ description: "Filing Fee", amount: 400 }],
+        durationDaysMin: 1,
+        durationDaysMax: 1
     },
     {
         id: 1,
@@ -395,7 +401,13 @@ export const NODES = [
         trigger: "Auto",
         deadline: "strict",
         isDecision: true,
-        notes: "Must serve within 120 days or face dismissal without prejudice"
+        notes: "Must serve within 120 days or face dismissal without prejudice",
+        // Structured cost data for estimator
+        attorneyHoursMin: 0,
+        attorneyHoursMax: 0,
+        fixedCosts: [{ description: "Service Fee", amountMin: 50, amountMax: 200 }],
+        durationDaysMin: 1,
+        durationDaysMax: 120
     },
     {
         id: 2,
@@ -410,7 +422,13 @@ export const NODES = [
         documents: ["Return of Service"],
         owner: "Process Server",
         trigger: "Known Address",
-        deadline: "strict"
+        deadline: "strict",
+        // Structured cost data for estimator
+        attorneyHoursMin: 0,
+        attorneyHoursMax: 0,
+        fixedCosts: [{ description: "Process Server Fee", amountMin: 75, amountMax: 150 }],
+        durationDaysMin: 1,
+        durationDaysMax: 30
     },
     {
         id: 3,
@@ -425,7 +443,13 @@ export const NODES = [
         documents: ["Affidavit of Service"],
         owner: "Process Server",
         trigger: "Unknown Location",
-        deadline: "strict"
+        deadline: "strict",
+        // Structured cost data for estimator
+        attorneyHoursMin: 0,
+        attorneyHoursMax: 1,
+        fixedCosts: [{ description: "Service Fee", amountMin: 100, amountMax: 200 }],
+        durationDaysMin: 15,
+        durationDaysMax: 45
     },
     {
         id: 4,
@@ -440,7 +464,13 @@ export const NODES = [
         documents: ["Motion for Service by Publication", "Affidavit of Diligent Search"],
         owner: "Attorney",
         trigger: "Court Order Required",
-        deadline: "strict"
+        deadline: "strict",
+        // Structured cost data for estimator
+        attorneyHoursMin: 2,
+        attorneyHoursMax: 4,
+        fixedCosts: [{ description: "Publication Fee", amountMin: 200, amountMax: 500 }],
+        durationDaysMin: 60,
+        durationDaysMax: 90
     },
     {
         id: 5,
@@ -455,7 +485,13 @@ export const NODES = [
         documents: ["Proof of Service"],
         owner: "Paralegal",
         trigger: "Valid Service",
-        deadline: "strict"
+        deadline: "strict",
+        // Structured cost data for estimator
+        attorneyHoursMin: 1,
+        attorneyHoursMax: 1,
+        fixedCosts: [],
+        durationDaysMin: 10,
+        durationDaysMax: 10
     },
     {
         id: 6,
@@ -471,7 +507,13 @@ export const NODES = [
         owner: "Opposing Counsel",
         trigger: "Improper Service",
         deadline: "flexible",
-        isException: true
+        isException: true,
+        // Structured cost data for estimator
+        attorneyHoursMin: 2,
+        attorneyHoursMax: 4,
+        fixedCosts: [],
+        durationDaysMin: 0,
+        durationDaysMax: 0
     },
 
     // ============================================
@@ -492,7 +534,13 @@ export const NODES = [
         trigger: "Legal Defect",
         deadline: "strict",
         isDecision: true,
-        notes: "20 days from service to file; extends answer deadline. Consider interlocutory appeal if denied."
+        notes: "20 days from service to file; extends answer deadline. Consider interlocutory appeal if denied.",
+        // Structured cost data for estimator
+        attorneyHoursMin: 15,
+        attorneyHoursMax: 30,
+        fixedCosts: [],
+        durationDaysMin: 20,
+        durationDaysMax: 20
     },
     {
         id: 8,
@@ -510,7 +558,13 @@ export const NODES = [
         deadline: "strict",
         isExpandable: true,
         expandsGroup: "amendment",
-        notes: "Amendment as of right available before answer. Consider third-party practice."
+        notes: "Amendment as of right available before answer. Consider third-party practice.",
+        // Structured cost data for estimator
+        attorneyHoursMin: 10,
+        attorneyHoursMax: 20,
+        fixedCosts: [],
+        durationDaysMin: 20,
+        durationDaysMax: 20
     },
     {
         id: 9,
@@ -526,7 +580,12 @@ export const NODES = [
         owner: "Court",
         trigger: "Defective Complaint",
         deadline: "flexible",
-        notes: "Often granted with leave to amend. 30 days to appeal if with prejudice."
+        notes: "Often granted with leave to amend. 30 days to appeal if with prejudice.",
+        attorneyHoursMin: 0,
+        attorneyHoursMax: 0,
+        fixedCosts: [],
+        durationDaysMin: 30,
+        durationDaysMax: 60
     },
     {
         id: 10,
@@ -542,7 +601,12 @@ export const NODES = [
         owner: "Court",
         trigger: "Valid Complaint",
         deadline: "flexible",
-        notes: "Consider certiorari for jurisdictional or immunity issues"
+        notes: "Consider certiorari for jurisdictional or immunity issues",
+        attorneyHoursMin: 0,
+        attorneyHoursMax: 0,
+        fixedCosts: [],
+        durationDaysMin: 30,
+        durationDaysMax: 60
     },
 
     // ============================================
@@ -565,7 +629,12 @@ export const NODES = [
         isDecision: true,
         isExpandable: true,
         expandsGroup: "complexity",
-        notes: "Court sets discovery deadlines, trial date, and ADR requirements. Request appropriate complexity track."
+        notes: "Court sets discovery deadlines, trial date, and ADR requirements. Request appropriate complexity track.",
+        attorneyHoursMin: 3,
+        attorneyHoursMax: 5,
+        fixedCosts: [],
+        durationDaysMin: 45,
+        durationDaysMax: 90
     },
 
     // ============================================
@@ -587,7 +656,12 @@ export const NODES = [
         deadline: "court-set",
         isDecision: true,
         group: "adr",
-        notes: "Mediator must be certified; process is confidential under 44.405"
+        notes: "Mediator must be certified; process is confidential under 44.405",
+        attorneyHoursMin: 8,
+        attorneyHoursMax: 16,
+        fixedCosts: [{ description: "Mediation Fee", amount: 1500 }],
+        durationDaysMin: 90,
+        durationDaysMax: 180
     },
     {
         id: 80,
@@ -605,7 +679,12 @@ export const NODES = [
         deadline: "court-set",
         isDecision: true,
         group: "adr",
-        notes: "Mandatory in some circuits for cases under $50K; non-binding allows trial de novo"
+        notes: "Mandatory in some circuits for cases under $50K; non-binding allows trial de novo",
+        attorneyHoursMin: 10,
+        attorneyHoursMax: 20,
+        fixedCosts: [{ description: "Arbitration Fee", amount: 2000 }],
+        durationDaysMin: 60,
+        durationDaysMax: 120
     },
     {
         id: 81,
@@ -623,7 +702,12 @@ export const NODES = [
         deadline: "court-set",
         isDecision: true,
         group: "adr",
-        notes: "20 days to request trial de novo or award becomes final"
+        notes: "20 days to request trial de novo or award becomes final",
+        attorneyHoursMin: 0,
+        attorneyHoursMax: 0,
+        fixedCosts: [],
+        durationDaysMin: 30,
+        durationDaysMax: 30
     },
     {
         id: 13,
@@ -638,7 +722,12 @@ export const NODES = [
         documents: ["Settlement Agreement", "Stipulation of Dismissal", "Release"],
         owner: "Attorneys",
         trigger: "Agreement Reached",
-        deadline: "flexible"
+        deadline: "flexible",
+        attorneyHoursMin: 5,
+        attorneyHoursMax: 10,
+        fixedCosts: [],
+        durationDaysMin: 30,
+        durationDaysMax: 30
     },
 
     // ============================================
@@ -660,7 +749,12 @@ export const NODES = [
         deadline: "court-set",
         isExpandable: true,
         expandsGroup: "discovery",
-        notes: "Standard discovery period is 6-12 months. Issue litigation hold immediately. Consider ESI protocol."
+        notes: "Standard discovery period is 6-12 months. Issue litigation hold immediately. Consider ESI protocol.",
+        attorneyHoursMin: 80,
+        attorneyHoursMax: 200,
+        fixedCosts: [],
+        durationDaysMin: 180,
+        durationDaysMax: 360
     },
     {
         id: 15,
@@ -677,7 +771,12 @@ export const NODES = [
         trigger: "Discovery Request Served",
         deadline: "strict",
         group: "discovery",
-        notes: "Limited to 30 interrogatories including subparts without court order"
+        notes: "Limited to 30 interrogatories including subparts without court order",
+        attorneyHoursMin: 10,
+        attorneyHoursMax: 20,
+        fixedCosts: [],
+        durationDaysMin: 30,
+        durationDaysMax: 30
     },
     {
         id: 16,
@@ -693,7 +792,12 @@ export const NODES = [
         owner: "Paralegal",
         trigger: "Discovery Request Served",
         deadline: "strict",
-        group: "discovery"
+        group: "discovery",
+        attorneyHoursMin: 15,
+        attorneyHoursMax: 40,
+        fixedCosts: [],
+        durationDaysMin: 30,
+        durationDaysMax: 30
     },
     {
         id: 40,
@@ -710,7 +814,12 @@ export const NODES = [
         trigger: "Discovery Request Served",
         deadline: "strict",
         group: "discovery",
-        notes: "Deemed admitted if not timely denied; powerful tool for summary judgment"
+        notes: "Deemed admitted if not timely denied; powerful tool for summary judgment",
+        attorneyHoursMin: 5,
+        attorneyHoursMax: 10,
+        fixedCosts: [],
+        durationDaysMin: 30,
+        durationDaysMax: 30
     },
     {
         id: 41,
@@ -727,7 +836,12 @@ export const NODES = [
         trigger: "Discovery Plan",
         deadline: "court-set",
         group: "discovery",
-        notes: "7-hour limit per deponent; may need court order for extension"
+        notes: "7-hour limit per deponent; may need court order for extension",
+        attorneyHoursMin: 20,
+        attorneyHoursMax: 50,
+        fixedCosts: [{ description: "Court Reporter/Transcript", amount: 2000 }],
+        durationDaysMin: 30,
+        durationDaysMax: 90
     },
     {
         id: 42,
@@ -744,7 +858,12 @@ export const NODES = [
         trigger: "Third-Party Records Needed",
         deadline: "strict",
         group: "discovery",
-        notes: "For obtaining records from non-parties"
+        notes: "For obtaining records from non-parties",
+        attorneyHoursMin: 3,
+        attorneyHoursMax: 5,
+        fixedCosts: [],
+        durationDaysMin: 30,
+        durationDaysMax: 30
     },
     {
         id: 17,
@@ -760,7 +879,13 @@ export const NODES = [
         owner: "n/a",
         trigger: "After 30d Response Period",
         deadline: "flexible",
-        isDecision: true
+        isDecision: true,
+        group: "discovery",
+        attorneyHoursMin: 0,
+        attorneyHoursMax: 0,
+        fixedCosts: [],
+        durationDaysMin: 0,
+        durationDaysMax: 0
     },
     {
         id: 18,
@@ -776,7 +901,13 @@ export const NODES = [
         owner: "Attorney",
         trigger: "Failed to Respond",
         deadline: "flexible",
-        notes: "Must certify good faith effort to resolve before filing"
+        notes: "Must certify good faith effort to resolve before filing",
+        group: "discovery",
+        attorneyHoursMin: 8,
+        attorneyHoursMax: 15,
+        fixedCosts: [],
+        durationDaysMin: 30,
+        durationDaysMax: 30
     },
     {
         id: 19,
@@ -794,7 +925,12 @@ export const NODES = [
         deadline: "court-set",
         isExpandable: true,
         expandsGroup: "daubert",
-        notes: "Must disclose opinions, basis, qualifications per 1.280(b)(5). Prepare for Daubert challenge."
+        notes: "Must disclose opinions, basis, qualifications per 1.280(b)(5). Prepare for Daubert challenge.",
+        attorneyHoursMin: 5,
+        attorneyHoursMax: 10,
+        fixedCosts: [{ description: "Expert Retainer/Report", amount: 5000 }],
+        durationDaysMin: 90,
+        durationDaysMax: 90
     },
 
     // ============================================
@@ -815,7 +951,12 @@ export const NODES = [
         trigger: "Complaint Filed/Anticipated",
         deadline: "strict",
         group: "eDiscovery",
-        notes: "Must preserve all potentially relevant ESI. Failure risks spoliation sanctions."
+        notes: "Must preserve all potentially relevant ESI. Failure risks spoliation sanctions.",
+        attorneyHoursMin: 2,
+        attorneyHoursMax: 5,
+        fixedCosts: [],
+        durationDaysMin: 1,
+        durationDaysMax: 1
     },
     {
         id: 201,
@@ -832,7 +973,12 @@ export const NODES = [
         trigger: "Discovery Planning",
         deadline: "court-set",
         group: "eDiscovery",
-        notes: "Agree on formats, search terms, date ranges, custodians"
+        notes: "Agree on formats, search terms, date ranges, custodians",
+        attorneyHoursMin: 3,
+        attorneyHoursMax: 5,
+        fixedCosts: [],
+        durationDaysMin: 30,
+        durationDaysMax: 45
     },
     {
         id: 202,
@@ -850,7 +996,12 @@ export const NODES = [
         deadline: "flexible",
         isDecision: true,
         group: "eDiscovery",
-        notes: "Balance burden/cost against likely benefit. Consider TAR/predictive coding."
+        notes: "Balance burden/cost against likely benefit. Consider TAR/predictive coding.",
+        attorneyHoursMin: 5,
+        attorneyHoursMax: 10,
+        fixedCosts: [],
+        durationDaysMin: 7,
+        durationDaysMax: 30
     },
     {
         id: 203,
@@ -867,7 +1018,12 @@ export const NODES = [
         trigger: "Disproportionate Burden",
         deadline: "flexible",
         group: "eDiscovery",
-        notes: "Requesting party may be required to bear costs of production"
+        notes: "Requesting party may be required to bear costs of production",
+        attorneyHoursMin: 8,
+        attorneyHoursMax: 15,
+        fixedCosts: [],
+        durationDaysMin: 30,
+        durationDaysMax: 30
     },
     {
         id: 204,
@@ -885,7 +1041,12 @@ export const NODES = [
         deadline: "flexible",
         isDecision: true,
         group: "eDiscovery",
-        notes: "Sanctions range from adverse inference to default judgment"
+        notes: "Sanctions range from adverse inference to default judgment",
+        attorneyHoursMin: 15,
+        attorneyHoursMax: 30,
+        fixedCosts: [{ description: "Forensic Analysis", amount: 5000 }],
+        durationDaysMin: 30,
+        durationDaysMax: 30
     },
 
     // ============================================
@@ -906,7 +1067,12 @@ export const NODES = [
         trigger: "Expert Disclosure Received",
         deadline: "court-set",
         group: "daubert",
-        notes: "Florida adopted Daubert in 2019. Challenge methodology, not conclusions."
+        notes: "Florida adopted Daubert in 2019. Challenge methodology, not conclusions.",
+        attorneyHoursMin: 15,
+        attorneyHoursMax: 30,
+        fixedCosts: [],
+        durationDaysMin: 60,
+        durationDaysMax: 60
     },
     {
         id: 141,
@@ -924,7 +1090,12 @@ export const NODES = [
         deadline: "court-set",
         isDecision: true,
         group: "daubert",
-        notes: "Gatekeeper function: reliable methodology + proper application"
+        notes: "Gatekeeper function: reliable methodology + proper application",
+        attorneyHoursMin: 20,
+        attorneyHoursMax: 40,
+        fixedCosts: [{ description: "Expert Appearance Fee", amount: 3000 }],
+        durationDaysMin: 30,
+        durationDaysMax: 45
     },
     {
         id: 142,
@@ -941,7 +1112,12 @@ export const NODES = [
         trigger: "Hearing Complete",
         deadline: "flexible",
         group: "daubert",
-        notes: "If excluded, consider interlocutory appeal or summary judgment implications"
+        notes: "If excluded, consider interlocutory appeal or summary judgment implications",
+        attorneyHoursMin: 0,
+        attorneyHoursMax: 0,
+        fixedCosts: [],
+        durationDaysMin: 1,
+        durationDaysMax: 1
     },
 
     // ============================================
@@ -962,7 +1138,12 @@ export const NODES = [
         trigger: "No Material Facts",
         deadline: "court-set",
         isDecision: true,
-        notes: "Must be served at least 40 days before hearing per 1.510(c). Use RFAs strategically."
+        notes: "Must be served at least 40 days before hearing per 1.510(c). Use RFAs strategically.",
+        attorneyHoursMin: 40,
+        attorneyHoursMax: 80,
+        fixedCosts: [],
+        durationDaysMin: 60,
+        durationDaysMax: 90
     },
     {
         id: 21,
@@ -977,7 +1158,12 @@ export const NODES = [
         documents: ["Final Summary Judgment"],
         owner: "Court",
         trigger: "No Genuine Issues",
-        deadline: "flexible"
+        deadline: "flexible",
+        attorneyHoursMin: 0,
+        attorneyHoursMax: 0,
+        fixedCosts: [],
+        durationDaysMin: 30,
+        durationDaysMax: 60
     },
     {
         id: 22,
@@ -992,14 +1178,19 @@ export const NODES = [
         documents: ["Court Order"],
         owner: "Court",
         trigger: "Material Issues Exist",
-        deadline: "flexible"
+        deadline: "flexible",
+        attorneyHoursMin: 0,
+        attorneyHoursMax: 0,
+        fixedCosts: [],
+        durationDaysMin: 30,
+        durationDaysMax: 60
     },
     {
         id: 23,
         name: "Proposal for\nSettlement",
         rule: "768.79/1.442",
-        x: 2200,
-        y: 550,
+        x: 50,
+        y: 750,
         stage: "Settlement",
         volume: 25,
         duration: "30d to accept",
@@ -1008,9 +1199,14 @@ export const NODES = [
         owner: "Attorney",
         trigger: "Strategic Timing",
         deadline: "strict",
-        isDecision: true,
+        isDecision: false,
         isParallel: true,
-        notes: "Available 30+ days after service; must be 45+ days before trial. Fee-shifting if judgment worse than rejected offer by 25%."
+        notes: "Available 30+ days after service; must be 45+ days before trial. Fee-shifting if judgment worse than rejected offer by 25%.",
+        attorneyHoursMin: 3,
+        attorneyHoursMax: 5,
+        fixedCosts: [],
+        durationDaysMin: 30,
+        durationDaysMax: 30
     },
 
     // ============================================
@@ -1033,7 +1229,12 @@ export const NODES = [
         isDecision: true,
         isExpandable: true,
         expandsGroup: "trialPrep",
-        notes: "Final opportunity to narrow issues, stipulate to facts, resolve evidentiary disputes"
+        notes: "Final opportunity to narrow issues, stipulate to facts, resolve evidentiary disputes",
+        attorneyHoursMin: 10,
+        attorneyHoursMax: 20,
+        fixedCosts: [],
+        durationDaysMin: 30,
+        durationDaysMax: 30
     },
     {
         id: 50,
@@ -1050,7 +1251,12 @@ export const NODES = [
         trigger: "Evidentiary Issues",
         deadline: "court-set",
         group: "trialPrep",
-        notes: "Used to exclude prejudicial evidence; ruling preserves objection for appeal"
+        notes: "Used to exclude prejudicial evidence; ruling preserves objection for appeal",
+        attorneyHoursMin: 10,
+        attorneyHoursMax: 25,
+        fixedCosts: [],
+        durationDaysMin: 14,
+        durationDaysMax: 30
     },
     {
         id: 51,
@@ -1067,7 +1273,12 @@ export const NODES = [
         trigger: "Witness/Document Needed",
         deadline: "strict",
         group: "trialPrep",
-        notes: "Must be served reasonable time before trial; include witness fees"
+        notes: "Must be served reasonable time before trial; include witness fees",
+        attorneyHoursMin: 3,
+        attorneyHoursMax: 5,
+        fixedCosts: [{ description: "Witness Fees", amountMin: 100, amountMax: 500 }],
+        durationDaysMin: 10,
+        durationDaysMax: 10
     },
     {
         id: 52,
@@ -1084,7 +1295,12 @@ export const NODES = [
         trigger: "Jury Trial",
         deadline: "court-set",
         group: "trialPrep",
-        notes: "Use Florida Standard Jury Instructions where available; request special instructions with legal authority"
+        notes: "Use Florida Standard Jury Instructions where available; request special instructions with legal authority",
+        attorneyHoursMin: 8,
+        attorneyHoursMax: 15,
+        fixedCosts: [],
+        durationDaysMin: 10,
+        durationDaysMax: 14
     },
     {
         id: 53,
@@ -1100,7 +1316,12 @@ export const NODES = [
         owner: "Paralegal",
         trigger: "Pretrial Order",
         deadline: "court-set",
-        group: "trialPrep"
+        group: "trialPrep",
+        attorneyHoursMin: 5,
+        attorneyHoursMax: 10,
+        fixedCosts: [],
+        durationDaysMin: 5,
+        durationDaysMax: 10
     },
     {
         id: 25,
@@ -1116,7 +1337,12 @@ export const NODES = [
         owner: "All Parties",
         trigger: "Agreement Reached",
         deadline: "flexible",
-        notes: "Many cases settle on courthouse steps"
+        notes: "Many cases settle on courthouse steps",
+        attorneyHoursMin: 5,
+        attorneyHoursMax: 10,
+        fixedCosts: [],
+        durationDaysMin: 1,
+        durationDaysMax: 1
     },
 
     // ============================================
@@ -1137,7 +1363,12 @@ export const NODES = [
         trigger: "No Settlement",
         deadline: "court-set",
         isExpandable: true,
-        expandsGroup: "trial"
+        expandsGroup: "trial",
+        attorneyHoursMin: 200,
+        attorneyHoursMax: 400,
+        fixedCosts: [{ description: "Trial Exhibits/Copies", amountMin: 500, amountMax: 2000 }],
+        durationDaysMin: 3,
+        durationDaysMax: 15
     },
     {
         id: 60,
@@ -1154,7 +1385,12 @@ export const NODES = [
         trigger: "Jury Trial",
         deadline: "court-set",
         group: "trial",
-        notes: "3 peremptory challenges each side; unlimited for-cause challenges. Melbourne hearing for cause challenges."
+        notes: "3 peremptory challenges each side; unlimited for-cause challenges. Melbourne hearing for cause challenges.",
+        attorneyHoursMin: 20,
+        attorneyHoursMax: 40,
+        fixedCosts: [],
+        durationDaysMin: 0.5,
+        durationDaysMax: 2
     },
     {
         id: 61,
@@ -1171,7 +1407,12 @@ export const NODES = [
         trigger: "After Jury Sworn",
         deadline: "court-set",
         group: "trial",
-        notes: "Plaintiff goes first; defendant may reserve until case-in-chief"
+        notes: "Plaintiff goes first; defendant may reserve until case-in-chief",
+        attorneyHoursMin: 10,
+        attorneyHoursMax: 20,
+        fixedCosts: [],
+        durationDaysMin: 0.125,
+        durationDaysMax: 0.5
     },
     {
         id: 62,
@@ -1187,7 +1428,12 @@ export const NODES = [
         owner: "Plaintiff Attorney",
         trigger: "After Openings",
         deadline: "court-set",
-        group: "trial"
+        group: "trial",
+        attorneyHoursMin: 40,
+        attorneyHoursMax: 100,
+        fixedCosts: [],
+        durationDaysMin: 1,
+        durationDaysMax: 5
     },
     {
         id: 63,
@@ -1205,7 +1451,12 @@ export const NODES = [
         deadline: "strict",
         isDecision: true,
         group: "trial",
-        notes: "Must be made at close of plaintiff's evidence to preserve for appeal and JNOV"
+        notes: "Must be made at close of plaintiff's evidence to preserve for appeal and JNOV",
+        attorneyHoursMin: 2,
+        attorneyHoursMax: 5,
+        fixedCosts: [],
+        durationDaysMin: 0.0625,
+        durationDaysMax: 0.0625
     },
     {
         id: 64,
@@ -1221,7 +1472,12 @@ export const NODES = [
         owner: "Defendant Attorney",
         trigger: "Directed Verdict Denied",
         deadline: "court-set",
-        group: "trial"
+        group: "trial",
+        attorneyHoursMin: 40,
+        attorneyHoursMax: 100,
+        fixedCosts: [],
+        durationDaysMin: 1,
+        durationDaysMax: 5
     },
     {
         id: 65,
@@ -1238,7 +1494,12 @@ export const NODES = [
         trigger: "Evidence Closed",
         deadline: "court-set",
         group: "trial",
-        notes: "Plaintiff opens, defendant responds, plaintiff rebuts"
+        notes: "Plaintiff opens, defendant responds, plaintiff rebuts",
+        attorneyHoursMin: 15,
+        attorneyHoursMax: 30,
+        fixedCosts: [],
+        durationDaysMin: 0.125,
+        durationDaysMax: 0.5
     },
     {
         id: 66,
@@ -1255,7 +1516,12 @@ export const NODES = [
         trigger: "After Closings",
         deadline: "court-set",
         group: "trial",
-        notes: "Object to instructions before jury retires to preserve error"
+        notes: "Object to instructions before jury retires to preserve error",
+        attorneyHoursMin: 0,
+        attorneyHoursMax: 0,
+        fixedCosts: [],
+        durationDaysMin: 0.0625,
+        durationDaysMax: 0.125
     },
     {
         id: 27,
@@ -1271,7 +1537,12 @@ export const NODES = [
         owner: "Jury/Judge",
         trigger: "Jury Deliberation",
         deadline: "court-set",
-        notes: "May poll jury; verdict must be unanimous in civil cases"
+        notes: "May poll jury; verdict must be unanimous in civil cases",
+        attorneyHoursMin: 0,
+        attorneyHoursMax: 0,
+        fixedCosts: [],
+        durationDaysMin: 0.125,
+        durationDaysMax: 3
     },
 
     // ============================================
@@ -1294,7 +1565,12 @@ export const NODES = [
         isDecision: true,
         isExpandable: true,
         expandsGroup: "postTrial",
-        notes: "Critical: 10 days to file most post-trial motions from verdict/judgment"
+        notes: "Critical: 10 days to file most post-trial motions from verdict/judgment",
+        attorneyHoursMin: 20,
+        attorneyHoursMax: 40,
+        fixedCosts: [],
+        durationDaysMin: 10,
+        durationDaysMax: 10
     },
     {
         id: 29,
@@ -1311,7 +1587,12 @@ export const NODES = [
         trigger: "Error Identified",
         deadline: "strict",
         group: "postTrial",
-        notes: "10 days from verdict; tolls appeal deadline"
+        notes: "10 days from verdict; tolls appeal deadline",
+        attorneyHoursMin: 25,
+        attorneyHoursMax: 50,
+        fixedCosts: [],
+        durationDaysMin: 30,
+        durationDaysMax: 30
     },
     {
         id: 70,
@@ -1328,7 +1609,12 @@ export const NODES = [
         trigger: "No Competent Evidence",
         deadline: "strict",
         group: "postTrial",
-        notes: "Must have moved for directed verdict to preserve; 10 days from verdict"
+        notes: "Must have moved for directed verdict to preserve; 10 days from verdict",
+        attorneyHoursMin: 20,
+        attorneyHoursMax: 40,
+        fixedCosts: [],
+        durationDaysMin: 30,
+        durationDaysMax: 30
     },
     {
         id: 71,
@@ -1345,7 +1631,12 @@ export const NODES = [
         trigger: "Excessive/Inadequate Damages",
         deadline: "strict",
         group: "postTrial",
-        notes: "Alternative to new trial on damages only"
+        notes: "Alternative to new trial on damages only",
+        attorneyHoursMin: 10,
+        attorneyHoursMax: 20,
+        fixedCosts: [],
+        durationDaysMin: 30,
+        durationDaysMax: 30
     },
     {
         id: 72,
@@ -1362,7 +1653,12 @@ export const NODES = [
         trigger: "Prevailing Party",
         deadline: "strict",
         group: "postTrial",
-        notes: "30 days from judgment to file; include taxable costs per 57.041"
+        notes: "30 days from judgment to file; include taxable costs per 57.041",
+        attorneyHoursMin: 3,
+        attorneyHoursMax: 8,
+        fixedCosts: [],
+        durationDaysMin: 30,
+        durationDaysMax: 30
     },
     {
         id: 30,
@@ -1379,7 +1675,12 @@ export const NODES = [
         trigger: "Case Finalized",
         deadline: "strict",
         isExpandable: true,
-        expandsGroup: "fees"
+        expandsGroup: "fees",
+        attorneyHoursMin: 3,
+        attorneyHoursMax: 5,
+        fixedCosts: [],
+        durationDaysMin: 10,
+        durationDaysMax: 10
     },
 
     // ============================================
@@ -1400,7 +1701,12 @@ export const NODES = [
         trigger: "Prevailing Party/Contract/Statute",
         deadline: "strict",
         group: "fees",
-        notes: "Establish entitlement first (contract, statute, proposal for settlement)"
+        notes: "Establish entitlement first (contract, statute, proposal for settlement)",
+        attorneyHoursMin: 5,
+        attorneyHoursMax: 10,
+        fixedCosts: [],
+        durationDaysMin: 30,
+        durationDaysMax: 30
     },
     {
         id: 151,
@@ -1417,7 +1723,12 @@ export const NODES = [
         trigger: "Entitlement Established",
         deadline: "court-set",
         group: "fees",
-        notes: "Rowe factors: time, skill, complexity, results. Expert testimony may be required."
+        notes: "Rowe factors: time, skill, complexity, results. Expert testimony may be required.",
+        attorneyHoursMin: 10,
+        attorneyHoursMax: 20,
+        fixedCosts: [{ description: "Expert Fee Witness", amountMin: 1000, amountMax: 3000 }],
+        durationDaysMin: 60,
+        durationDaysMax: 90
     },
     {
         id: 152,
@@ -1434,7 +1745,12 @@ export const NODES = [
         trigger: "Frivolous Claim/Defense",
         deadline: "strict",
         group: "fees",
-        notes: "Must serve 21-day safe harbor before filing. Fees against party AND attorney."
+        notes: "Must serve 21-day safe harbor before filing. Fees against party AND attorney.",
+        attorneyHoursMin: 5,
+        attorneyHoursMax: 15,
+        fixedCosts: [],
+        durationDaysMin: 21,
+        durationDaysMax: 60
     },
     {
         id: 153,
@@ -1451,7 +1767,12 @@ export const NODES = [
         trigger: "Rejected Proposal",
         deadline: "strict",
         group: "fees",
-        notes: "If judgment 25%+ worse than rejected offer: fees from date of offer"
+        notes: "If judgment 25%+ worse than rejected offer: fees from date of offer",
+        attorneyHoursMin: 5,
+        attorneyHoursMax: 10,
+        fixedCosts: [],
+        durationDaysMin: 30,
+        durationDaysMax: 60
     },
     {
         id: 154,
@@ -1467,7 +1788,12 @@ export const NODES = [
         owner: "Court",
         trigger: "Hearing Complete",
         deadline: "flexible",
-        group: "fees"
+        group: "fees",
+        attorneyHoursMin: 0,
+        attorneyHoursMax: 0,
+        fixedCosts: [],
+        durationDaysMin: 1,
+        durationDaysMax: 30
     },
 
     // ============================================
@@ -1488,7 +1814,12 @@ export const NODES = [
         trigger: "Non-Payment",
         deadline: "flexible",
         isDecision: true,
-        notes: "20-year judgment lien; must record in each county"
+        notes: "20-year judgment lien; must record in each county",
+        attorneyHoursMin: 0,
+        attorneyHoursMax: 0,
+        fixedCosts: [],
+        durationDaysMin: 0,
+        durationDaysMax: 0
     },
     {
         id: 32,
@@ -1504,7 +1835,12 @@ export const NODES = [
         owner: "Sheriff",
         trigger: "Assets Identified",
         deadline: "flexible",
-        notes: "Homestead and head-of-family exemptions apply"
+        notes: "Homestead and head-of-family exemptions apply",
+        attorneyHoursMin: 10,
+        attorneyHoursMax: 30,
+        fixedCosts: [{ description: "Sheriff/Garnishment Fees", amountMin: 50, amountMax: 500 }],
+        durationDaysMin: 30,
+        durationDaysMax: 365
     },
 
     // ============================================
@@ -1527,7 +1863,12 @@ export const NODES = [
         isDecision: true,
         isExpandable: true,
         expandsGroup: "stay",
-        notes: "30 days from rendition of final order. Consider stay pending appeal."
+        notes: "30 days from rendition of final order. Consider stay pending appeal.",
+        attorneyHoursMin: 0,
+        attorneyHoursMax: 0,
+        fixedCosts: [],
+        durationDaysMin: 30,
+        durationDaysMax: 30
     },
     {
         id: 34,
@@ -1543,7 +1884,12 @@ export const NODES = [
         owner: "Attorney",
         trigger: "File Appeal",
         deadline: "strict",
-        notes: "Jurisdictional deadline; cross-appeal within 10 days"
+        notes: "Jurisdictional deadline; cross-appeal within 10 days",
+        attorneyHoursMin: 50,
+        attorneyHoursMax: 150,
+        fixedCosts: [{ description: "Appeal Filing Fee", amount: 300 }],
+        durationDaysMin: 30,
+        durationDaysMax: 30
     },
 
     // ============================================
@@ -1564,7 +1910,12 @@ export const NODES = [
         trigger: "Appeal Filed",
         deadline: "strict",
         group: "stay",
-        notes: "Automatic stay of money judgment upon posting supersedeas bond"
+        notes: "Automatic stay of money judgment upon posting supersedeas bond",
+        attorneyHoursMin: 5,
+        attorneyHoursMax: 10,
+        fixedCosts: [],
+        durationDaysMin: 7,
+        durationDaysMax: 30
     },
     {
         id: 161,
@@ -1582,7 +1933,12 @@ export const NODES = [
         deadline: "strict",
         isDecision: true,
         group: "stay",
-        notes: "Generally judgment amount + 2 years interest + costs. May seek reduction."
+        notes: "Generally judgment amount + 2 years interest + costs. May seek reduction.",
+        attorneyHoursMin: 2,
+        attorneyHoursMax: 5,
+        fixedCosts: [{ description: "Bond Premium (varies by judgment)", amountMin: 1000, amountMax: 50000 }],
+        durationDaysMin: 1,
+        durationDaysMax: 7
     },
     {
         id: 162,
@@ -1599,7 +1955,12 @@ export const NODES = [
         trigger: "Excessive Bond",
         deadline: "flexible",
         group: "stay",
-        notes: "Show bond would cause irreparable harm; offer alternative security"
+        notes: "Show bond would cause irreparable harm; offer alternative security",
+        attorneyHoursMin: 5,
+        attorneyHoursMax: 10,
+        fixedCosts: [],
+        durationDaysMin: 30,
+        durationDaysMax: 30
     },
     {
         id: 163,
@@ -1615,7 +1976,12 @@ export const NODES = [
         owner: "Court",
         trigger: "Bond Posted/Motion Decided",
         deadline: "flexible",
-        group: "stay"
+        group: "stay",
+        attorneyHoursMin: 0,
+        attorneyHoursMax: 0,
+        fixedCosts: [],
+        durationDaysMin: 7,
+        durationDaysMax: 30
     },
 
     // ============================================
@@ -1638,7 +2004,12 @@ export const NODES = [
         isDecision: true,
         isExpandable: true,
         expandsGroup: "emergency",
-        notes: "Available at any time. Must show irreparable harm and likelihood of success."
+        notes: "Available at any time. Must show irreparable harm and likelihood of success.",
+        attorneyHoursMin: 0,
+        attorneyHoursMax: 0,
+        fixedCosts: [],
+        durationDaysMin: 0,
+        durationDaysMax: 0
     },
     {
         id: 111,
@@ -1655,7 +2026,12 @@ export const NODES = [
         trigger: "Immediate Harm",
         deadline: "strict",
         group: "emergency",
-        notes: "Ex parte allowed only if immediate irreparable harm shown. Bond usually required."
+        notes: "Ex parte allowed only if immediate irreparable harm shown. Bond usually required.",
+        attorneyHoursMin: 10,
+        attorneyHoursMax: 20,
+        fixedCosts: [{ description: "Emergency Filing Fee", amount: 400 }],
+        durationDaysMin: 1,
+        durationDaysMax: 1
     },
     {
         id: 112,
@@ -1673,7 +2049,12 @@ export const NODES = [
         deadline: "strict",
         isDecision: true,
         group: "emergency",
-        notes: "Ex parte TRO: 15 days max. Must set preliminary injunction hearing."
+        notes: "Ex parte TRO: 15 days max. Must set preliminary injunction hearing.",
+        attorneyHoursMin: 5,
+        attorneyHoursMax: 10,
+        fixedCosts: [],
+        durationDaysMin: 1,
+        durationDaysMax: 1
     },
     {
         id: 113,
@@ -1690,7 +2071,12 @@ export const NODES = [
         trigger: "Irreparable Harm Shown",
         deadline: "strict",
         group: "emergency",
-        notes: "Bond protects defendant if TRO wrongfully issued. Must expedite PI hearing."
+        notes: "Bond protects defendant if TRO wrongfully issued. Must expedite PI hearing.",
+        attorneyHoursMin: 0,
+        attorneyHoursMax: 0,
+        fixedCosts: [{ description: "TRO Bond", amountMin: 500, amountMax: 10000 }],
+        durationDaysMin: 15,
+        durationDaysMax: 15
     },
     {
         id: 114,
@@ -1708,7 +2094,12 @@ export const NODES = [
         deadline: "court-set",
         isDecision: true,
         group: "emergency",
-        notes: "Four-part test: likelihood of success, irreparable harm, balance of harms, public interest"
+        notes: "Four-part test: likelihood of success, irreparable harm, balance of harms, public interest",
+        attorneyHoursMin: 20,
+        attorneyHoursMax: 40,
+        fixedCosts: [],
+        durationDaysMin: 15,
+        durationDaysMax: 15
     },
     {
         id: 115,
@@ -1726,7 +2117,12 @@ export const NODES = [
         deadline: "flexible",
         isDecision: true,
         group: "emergency",
-        notes: "If granted, remains in effect through trial. Interlocutory appeal available under 9.130."
+        notes: "If granted, remains in effect through trial. Interlocutory appeal available under 9.130.",
+        attorneyHoursMin: 0,
+        attorneyHoursMax: 0,
+        fixedCosts: [{ description: "PI Bond (if granted)", amountMin: 1000, amountMax: 25000 }],
+        durationDaysMin: 1,
+        durationDaysMax: 7
     },
 
     // ============================================
@@ -1749,7 +2145,12 @@ export const NODES = [
         isDecision: true,
         isExpandable: true,
         expandsGroup: "interlocutory",
-        notes: "Limited categories: injunctions, class cert, arbitration, jurisdiction, immunity"
+        notes: "Limited categories: injunctions, class cert, arbitration, jurisdiction, immunity",
+        attorneyHoursMin: 0,
+        attorneyHoursMax: 0,
+        fixedCosts: [],
+        durationDaysMin: 0,
+        durationDaysMax: 0
     },
     {
         id: 121,
@@ -1766,7 +2167,12 @@ export const NODES = [
         trigger: "Discovery Order/Other",
         deadline: "strict",
         group: "interlocutory",
-        notes: "For orders not appealable under 9.130. Must show departure from essential requirements of law."
+        notes: "For orders not appealable under 9.130. Must show departure from essential requirements of law.",
+        attorneyHoursMin: 20,
+        attorneyHoursMax: 40,
+        fixedCosts: [{ description: "Certiorari Filing Fee", amount: 300 }],
+        durationDaysMin: 30,
+        durationDaysMax: 30
     },
     {
         id: 122,
@@ -1783,7 +2189,12 @@ export const NODES = [
         trigger: "Enumerated Order",
         deadline: "strict",
         group: "interlocutory",
-        notes: "Injunctions, venue, class certification, arbitration compelled/denied"
+        notes: "Injunctions, venue, class certification, arbitration compelled/denied",
+        attorneyHoursMin: 25,
+        attorneyHoursMax: 50,
+        fixedCosts: [{ description: "Appeal Filing Fee", amount: 300 }],
+        durationDaysMin: 30,
+        durationDaysMax: 30
     },
     {
         id: 123,
@@ -1800,7 +2211,12 @@ export const NODES = [
         trigger: "Judge Exceeded Authority",
         deadline: "flexible",
         group: "interlocutory",
-        notes: "Mandamus: compel act. Prohibition: prevent act. Rarely granted."
+        notes: "Mandamus: compel act. Prohibition: prevent act. Rarely granted.",
+        attorneyHoursMin: 15,
+        attorneyHoursMax: 30,
+        fixedCosts: [{ description: "Writ Filing Fee", amount: 300 }],
+        durationDaysMin: 30,
+        durationDaysMax: 90
     },
     {
         id: 124,
@@ -1818,7 +2234,12 @@ export const NODES = [
         deadline: "flexible",
         isDecision: true,
         group: "interlocutory",
-        notes: "Case proceeds in trial court unless stay obtained"
+        notes: "Case proceeds in trial court unless stay obtained",
+        attorneyHoursMin: 0,
+        attorneyHoursMax: 0,
+        fixedCosts: [],
+        durationDaysMin: 60,
+        durationDaysMax: 120
     },
 
     // ============================================
@@ -1841,7 +2262,12 @@ export const NODES = [
         isDecision: true,
         isExpandable: true,
         expandsGroup: "thirdParty",
-        notes: "Consider impleader for indemnification, contribution, or liability shift"
+        notes: "Consider impleader for indemnification, contribution, or liability shift",
+        attorneyHoursMin: 0,
+        attorneyHoursMax: 0,
+        fixedCosts: [],
+        durationDaysMin: 0,
+        durationDaysMax: 0
     },
     {
         id: 131,
@@ -1858,7 +2284,12 @@ export const NODES = [
         trigger: "Indemnity Claim",
         deadline: "court-set",
         group: "thirdParty",
-        notes: "As of right before answering; leave required after. Must serve third-party defendant."
+        notes: "As of right before answering; leave required after. Must serve third-party defendant.",
+        attorneyHoursMin: 15,
+        attorneyHoursMax: 25,
+        fixedCosts: [{ description: "Third-Party Filing Fee", amount: 400 }],
+        durationDaysMin: 20,
+        durationDaysMax: 30
     },
     {
         id: 132,
@@ -1875,7 +2306,12 @@ export const NODES = [
         trigger: "Claims Against Co-Party",
         deadline: "strict",
         group: "thirdParty",
-        notes: "Claims between co-defendants. Must arise from same transaction/occurrence."
+        notes: "Claims between co-defendants. Must arise from same transaction/occurrence.",
+        attorneyHoursMin: 10,
+        attorneyHoursMax: 20,
+        fixedCosts: [],
+        durationDaysMin: 20,
+        durationDaysMax: 20
     },
     {
         id: 133,
@@ -1892,7 +2328,12 @@ export const NODES = [
         trigger: "Competing Claims",
         deadline: "flexible",
         group: "thirdParty",
-        notes: "Stakeholder deposits funds with court; claimants litigate entitlement"
+        notes: "Stakeholder deposits funds with court; claimants litigate entitlement",
+        attorneyHoursMin: 10,
+        attorneyHoursMax: 15,
+        fixedCosts: [{ description: "Interpleader Filing Fee", amount: 400 }],
+        durationDaysMin: 30,
+        durationDaysMax: 60
     },
     {
         id: 134,
@@ -1908,7 +2349,12 @@ export const NODES = [
         owner: "Court",
         trigger: "Trial/Settlement",
         deadline: "flexible",
-        group: "thirdParty"
+        group: "thirdParty",
+        attorneyHoursMin: 0,
+        attorneyHoursMax: 0,
+        fixedCosts: [],
+        durationDaysMin: 30,
+        durationDaysMax: 180
     },
 
     // ============================================
@@ -1929,7 +2375,12 @@ export const NODES = [
         trigger: "Pleading Deficiency",
         deadline: "flexible",
         group: "amendment",
-        notes: "One amendment as of right before responsive pleading served"
+        notes: "One amendment as of right before responsive pleading served",
+        attorneyHoursMin: 5,
+        attorneyHoursMax: 15,
+        fixedCosts: [],
+        durationDaysMin: 7,
+        durationDaysMax: 14
     },
     {
         id: 171,
@@ -1947,7 +2398,12 @@ export const NODES = [
         deadline: "court-set",
         isDecision: true,
         group: "amendment",
-        notes: "Liberally granted unless prejudice, bad faith, or futility"
+        notes: "Liberally granted unless prejudice, bad faith, or futility",
+        attorneyHoursMin: 5,
+        attorneyHoursMax: 10,
+        fixedCosts: [],
+        durationDaysMin: 14,
+        durationDaysMax: 30
     },
     {
         id: 172,
@@ -1964,7 +2420,12 @@ export const NODES = [
         trigger: "SOL Issue",
         deadline: "flexible",
         group: "amendment",
-        notes: "Amendment relates back if same conduct/transaction/occurrence. Critical for SOL."
+        notes: "Amendment relates back if same conduct/transaction/occurrence. Critical for SOL.",
+        attorneyHoursMin: 0,
+        attorneyHoursMax: 0,
+        fixedCosts: [],
+        durationDaysMin: 0,
+        durationDaysMax: 0
     },
     {
         id: 173,
@@ -1980,7 +2441,12 @@ export const NODES = [
         owner: "Court",
         trigger: "Motion Decided",
         deadline: "flexible",
-        group: "amendment"
+        group: "amendment",
+        attorneyHoursMin: 0,
+        attorneyHoursMax: 0,
+        fixedCosts: [],
+        durationDaysMin: 14,
+        durationDaysMax: 30
     },
 
     // ============================================
@@ -2001,7 +2467,12 @@ export const NODES = [
         trigger: "Strategic Decision",
         deadline: "strict",
         group: "dismissal",
-        notes: "One free dismissal without prejudice before answer or MSJ. Second dismissal = with prejudice."
+        notes: "One free dismissal without prejudice before answer or MSJ. Second dismissal = with prejudice.",
+        attorneyHoursMin: 1,
+        attorneyHoursMax: 2,
+        fixedCosts: [],
+        durationDaysMin: 1,
+        durationDaysMax: 1
     },
     {
         id: 181,
@@ -2018,7 +2489,12 @@ export const NODES = [
         trigger: "Agreement",
         deadline: "flexible",
         group: "dismissal",
-        notes: "All parties stipulate; usually without prejudice unless specified"
+        notes: "All parties stipulate; usually without prejudice unless specified",
+        attorneyHoursMin: 1,
+        attorneyHoursMax: 2,
+        fixedCosts: [],
+        durationDaysMin: 1,
+        durationDaysMax: 7
     },
     {
         id: 182,
@@ -2036,7 +2512,12 @@ export const NODES = [
         deadline: "court-set",
         isDecision: true,
         group: "dismissal",
-        notes: "Court may impose terms and conditions. Consider counterclaims."
+        notes: "Court may impose terms and conditions. Consider counterclaims.",
+        attorneyHoursMin: 3,
+        attorneyHoursMax: 5,
+        fixedCosts: [],
+        durationDaysMin: 14,
+        durationDaysMax: 30
     },
 
     // ============================================
@@ -2057,7 +2538,12 @@ export const NODES = [
         trigger: "Simple Case/<$50K",
         deadline: "court-set",
         group: "complexity",
-        notes: "Limited discovery, shorter deadlines, early trial date"
+        notes: "Limited discovery, shorter deadlines, early trial date",
+        attorneyHoursMin: 0,
+        attorneyHoursMax: 0,
+        fixedCosts: [],
+        durationDaysMin: 180,
+        durationDaysMax: 270
     },
     {
         id: 191,
@@ -2074,7 +2560,12 @@ export const NODES = [
         trigger: "Typical Civil Case",
         deadline: "court-set",
         group: "complexity",
-        notes: "Standard discovery periods and trial scheduling"
+        notes: "Standard discovery periods and trial scheduling",
+        attorneyHoursMin: 0,
+        attorneyHoursMax: 0,
+        fixedCosts: [],
+        durationDaysMin: 365,
+        durationDaysMax: 540
     },
     {
         id: 192,
@@ -2092,7 +2583,12 @@ export const NODES = [
         deadline: "court-set",
         isDecision: true,
         group: "complexity",
-        notes: "Available in Miami-Dade, Hillsborough, others. Experienced judge, special procedures."
+        notes: "Available in Miami-Dade, Hillsborough, others. Experienced judge, special procedures.",
+        attorneyHoursMin: 0,
+        attorneyHoursMax: 0,
+        fixedCosts: [],
+        durationDaysMin: 540,
+        durationDaysMax: 1080
     },
 
     // ============================================
@@ -2113,7 +2609,12 @@ export const NODES = [
         trigger: "No Answer Filed",
         deadline: "strict",
         isException: true,
-        notes: "Must wait until answer deadline passes; prove-up hearing required for damages"
+        notes: "Must wait until answer deadline passes; prove-up hearing required for damages",
+        attorneyHoursMin: 5,
+        attorneyHoursMax: 10,
+        fixedCosts: [],
+        durationDaysMin: 20,
+        durationDaysMax: 60
     },
     {
         id: 101,
@@ -2130,7 +2631,12 @@ export const NODES = [
         trigger: "Lack of Prosecution",
         deadline: "court-set",
         isException: true,
-        notes: "No record activity for 10 months triggers notice; 60 days to show good cause"
+        notes: "No record activity for 10 months triggers notice; 60 days to show good cause",
+        attorneyHoursMin: 0,
+        attorneyHoursMax: 0,
+        fixedCosts: [],
+        durationDaysMin: 60,
+        durationDaysMax: 60
     },
     {
         id: 102,
@@ -2147,7 +2653,13 @@ export const NODES = [
         trigger: "Willful Violation",
         deadline: "flexible",
         isException: true,
-        notes: "Can include striking pleadings, adverse inference, or contempt"
+        group: "discovery",
+        notes: "Can include striking pleadings, adverse inference, or contempt",
+        attorneyHoursMin: 0,
+        attorneyHoursMax: 0,
+        fixedCosts: [],
+        durationDaysMin: 7,
+        durationDaysMax: 30
     }
 ];
 
@@ -2259,14 +2771,13 @@ export const LINKS = [
     { source: 141, target: 142, volume: 25, label: "Ruling", trigger: "Hearing Complete" },
     { source: 142, target: 20, volume: 20, label: "To Summary Judgment", trigger: "Expert Admitted/Excluded" },
 
-    // Summary Judgment & Proposals for Settlement
-    { source: 17, target: 20, volume: 32, label: "Summary Judgment", trigger: "Discovery Complete" },
+    // Summary Judgment
     { source: 19, target: 20, volume: 30, label: "Summary Judgment", trigger: "Discovery Complete" },
-    { source: 14, target: 23, volume: 25, label: "Proposal for Settlement", trigger: "30+ Days After Service", isParallel: true },
     { source: 20, target: 21, volume: 16, label: "Granted", trigger: "No Material Facts" },
     { source: 20, target: 22, volume: 16, label: "Denied", trigger: "Issues Remain" },
-    { source: 23, target: 13, volume: 10, label: "Accepted", trigger: "Within 30 Days" },
-    { source: 23, target: 24, volume: 15, label: "Rejected/Expired", trigger: "After 30 Days" },
+
+    // Proposal for Settlement (standalone from Complaint Filed)
+    { source: 0, target: 23, volume: 25, label: "Proposal for Settlement", trigger: "30+ Days After Service" },
 
     // Pretrial Phase
     { source: 22, target: 24, volume: 15, label: "Pretrial Conference", trigger: "Trial Soon" },

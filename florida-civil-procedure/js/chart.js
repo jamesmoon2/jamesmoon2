@@ -60,6 +60,12 @@ export class ChartRenderer {
         this.highlightedNodeId = null;
         this.highlightedPath = [];
 
+        // Cost estimator state
+        this.costEstimatorEnabled = false;
+        this.selectedNodes = new Set();
+        this.attorneyHourlyRate = 350;
+        this.sidebarCollapsed = false;
+
         // Create node lookup map for efficient access
         this.nodeMap = new Map();
         NODES.forEach(node => this.nodeMap.set(node.id, node));
@@ -573,10 +579,16 @@ export class ChartRenderer {
      * Handle node click
      */
     handleNodeClick(node) {
-        // If expandable, toggle expansion
-        if (node.isExpandable) {
+        // Cost estimator mode takes priority - allow selecting any node including expandable ones
+        // The + indicator has its own click handler for expansion
+        if (this.costEstimatorEnabled) {
+            this.toggleNodeSelection(node.id);
+            this.dispatchCostUpdate();
+        } else if (node.isExpandable) {
+            // When not in cost estimator mode, expandable nodes toggle expansion
             this.toggleGroup(node.expandsGroup);
         } else {
+            // Default: highlight and pan to node
             this.highlightNodeAndPaths(node.id);
         }
     }
@@ -828,6 +840,129 @@ export class ChartRenderer {
      */
     getSVGElement() {
         return this.svg.node();
+    }
+
+    // ============================================
+    // COST ESTIMATOR METHODS
+    // ============================================
+
+    /**
+     * Toggle cost estimator mode on/off
+     */
+    toggleCostEstimatorMode() {
+        this.costEstimatorEnabled = !this.costEstimatorEnabled;
+        if (!this.costEstimatorEnabled) {
+            this.clearNodeSelections();
+        }
+    }
+
+    /**
+     * Check if cost estimator mode is enabled
+     * @returns {boolean}
+     */
+    isCostEstimatorEnabled() {
+        return this.costEstimatorEnabled;
+    }
+
+    /**
+     * Toggle node selection (add or remove from selection)
+     * @param {number} nodeId - Node ID to toggle
+     */
+    toggleNodeSelection(nodeId) {
+        if (this.selectedNodes.has(nodeId)) {
+            this.selectedNodes.delete(nodeId);
+        } else {
+            this.selectedNodes.add(nodeId);
+        }
+        this.updateNodeSelectionVisuals(nodeId);
+    }
+
+    /**
+     * Select a node (add to selection)
+     * @param {number} nodeId - Node ID to select
+     */
+    selectNode(nodeId) {
+        this.selectedNodes.add(nodeId);
+        this.updateNodeSelectionVisuals(nodeId);
+    }
+
+    /**
+     * Deselect a node (remove from selection)
+     * @param {number} nodeId - Node ID to deselect
+     */
+    deselectNode(nodeId) {
+        this.selectedNodes.delete(nodeId);
+        this.updateNodeSelectionVisuals(nodeId);
+        this.dispatchCostUpdate();
+    }
+
+    /**
+     * Clear all node selections
+     */
+    clearNodeSelections() {
+        this.selectedNodes.clear();
+        this.nodeGroup.selectAll('.node-selected').classed('node-selected', false);
+    }
+
+    /**
+     * Get all selected nodes as node objects
+     * @returns {Array} Array of selected node objects
+     */
+    getSelectedNodes() {
+        return Array.from(this.selectedNodes).map(id => this.nodeMap.get(id)).filter(Boolean);
+    }
+
+    /**
+     * Update visual styling for a selected/deselected node
+     * @param {number} nodeId - Node ID to update
+     */
+    updateNodeSelectionVisuals(nodeId) {
+        const nodeElement = this.nodeGroup.select(`[data-node-id="${nodeId}"]`);
+        if (!nodeElement.empty()) {
+            nodeElement.classed('node-selected', this.selectedNodes.has(nodeId));
+        }
+    }
+
+    /**
+     * Set attorney hourly rate
+     * @param {number} rate - Hourly rate in dollars
+     */
+    setAttorneyHourlyRate(rate) {
+        this.attorneyHourlyRate = rate;
+    }
+
+    /**
+     * Get attorney hourly rate
+     * @returns {number}
+     */
+    getAttorneyHourlyRate() {
+        return this.attorneyHourlyRate;
+    }
+
+    /**
+     * Toggle sidebar collapsed state
+     */
+    toggleSidebar() {
+        this.sidebarCollapsed = !this.sidebarCollapsed;
+    }
+
+    /**
+     * Check if sidebar is collapsed
+     * @returns {boolean}
+     */
+    isSidebarCollapsed() {
+        return this.sidebarCollapsed;
+    }
+
+    /**
+     * Dispatch custom event when cost selection changes
+     * Used by ControlsManager to update the sidebar
+     */
+    dispatchCostUpdate() {
+        const event = new CustomEvent('costEstimatorUpdate', {
+            detail: { selectedNodes: this.getSelectedNodes() }
+        });
+        document.dispatchEvent(event);
     }
 
     /**

@@ -10,7 +10,9 @@ import {
     exportToPNG,
     exportToSVG,
     setupKeyboardShortcuts,
-    calculateStatistics
+    calculateStatistics,
+    calculateCostEstimates,
+    formatCurrency
 } from './utils.js';
 
 export class ControlsManager {
@@ -20,9 +22,15 @@ export class ControlsManager {
         this.searchResults = document.querySelector('.search-results');
         this.currentSearchResults = [];
 
+        // Cost estimator state
+        this.attorneyFeesEnabled = false;
+        this.selectionModeEnabled = false;
+        this.costSidebar = document.getElementById('costSidebar');
+
         this.setupEventListeners();
         this.setupKeyboardShortcuts();
         this.setupPhaseFilters();
+        this.setupCostEstimatorListeners();
         this.updateStatistics();
     }
 
@@ -382,5 +390,223 @@ export class ControlsManager {
         if (loadingElement) {
             loadingElement.remove();
         }
+    }
+
+    // ============================================
+    // COST ESTIMATOR METHODS
+    // ============================================
+
+    /**
+     * Setup cost estimator event listeners
+     */
+    setupCostEstimatorListeners() {
+        // Attorney Fees Toggle
+        document.getElementById('enableAttorneyFees')?.addEventListener('change', (e) => {
+            this.handleAttorneyFeesToggle(e.target.checked);
+        });
+
+        // Hourly Rate Input
+        document.getElementById('hourlyRate')?.addEventListener('input', debounce((e) => {
+            this.handleHourlyRateChange(parseInt(e.target.value, 10) || 0);
+        }, 300));
+
+        // Selection Mode Toggle
+        document.getElementById('enableSelectionMode')?.addEventListener('change', (e) => {
+            this.handleSelectionModeToggle(e.target.checked);
+        });
+
+        // Clear Selections Button
+        document.getElementById('clearSelections')?.addEventListener('click', () => {
+            this.handleClearSelections();
+        });
+
+        // Sidebar Toggle
+        document.getElementById('toggleSidebar')?.addEventListener('click', () => {
+            this.handleSidebarToggle();
+        });
+
+        // Also allow clicking the header to expand when collapsed
+        const sidebarHeader = document.querySelector('.cost-sidebar-header');
+        sidebarHeader?.addEventListener('click', (e) => {
+            // Only expand if sidebar is collapsed and click wasn't on the toggle button
+            if (this.costSidebar?.classList.contains('collapsed') &&
+                !e.target.closest('.sidebar-toggle')) {
+                this.handleSidebarToggle();
+            }
+        });
+
+        // Listen for cost update events from ChartRenderer
+        document.addEventListener('costEstimatorUpdate', (e) => {
+            this.updateCostEstimates(e.detail.selectedNodes);
+        });
+    }
+
+    /**
+     * Handle attorney fees toggle
+     * @param {boolean} enabled - Whether attorney fees calculation is enabled
+     */
+    handleAttorneyFeesToggle(enabled) {
+        this.attorneyFeesEnabled = enabled;
+
+        // Show/hide hourly rate input
+        const hourlyRateContainer = document.getElementById('hourlyRateContainer');
+        const attorneyFeesRow = document.getElementById('attorneyFeesRow');
+
+        if (hourlyRateContainer) {
+            hourlyRateContainer.style.display = enabled ? 'flex' : 'none';
+        }
+        if (attorneyFeesRow) {
+            attorneyFeesRow.style.display = enabled ? 'flex' : 'none';
+        }
+
+        // Update calculations with current selections
+        this.updateCostEstimates(this.chart.getSelectedNodes());
+    }
+
+    /**
+     * Handle hourly rate change
+     * @param {number} rate - New hourly rate
+     */
+    handleHourlyRateChange(rate) {
+        this.chart.setAttorneyHourlyRate(rate);
+        this.updateCostEstimates(this.chart.getSelectedNodes());
+    }
+
+    /**
+     * Handle selection mode toggle
+     * @param {boolean} enabled - Whether selection mode is enabled
+     */
+    handleSelectionModeToggle(enabled) {
+        this.selectionModeEnabled = enabled;
+        this.chart.toggleCostEstimatorMode();
+
+        // Show/hide clear selections button
+        const clearBtn = document.getElementById('clearSelections');
+        if (clearBtn) {
+            clearBtn.style.display = enabled ? 'inline-flex' : 'none';
+        }
+
+        // Show/hide sidebar
+        if (this.costSidebar) {
+            this.costSidebar.classList.toggle('visible', enabled);
+        }
+
+        // Update cursor style on chart
+        const chart = document.getElementById('chart');
+        if (chart) {
+            chart.classList.toggle('selection-mode', enabled);
+        }
+    }
+
+    /**
+     * Handle clear selections
+     */
+    handleClearSelections() {
+        this.chart.clearNodeSelections();
+        this.updateCostEstimates([]);
+    }
+
+    /**
+     * Handle sidebar toggle (collapse/expand)
+     */
+    handleSidebarToggle() {
+        this.chart.toggleSidebar();
+
+        if (this.costSidebar) {
+            this.costSidebar.classList.toggle('collapsed');
+        }
+
+        // Update toggle icon direction
+        const toggleIcon = document.querySelector('.collapse-icon');
+        if (toggleIcon) {
+            toggleIcon.textContent = this.chart.isSidebarCollapsed() ? '\u25C0' : '\u25B6';
+        }
+    }
+
+    /**
+     * Update cost estimates display in sidebar
+     * @param {Array} selectedNodes - Array of selected node objects
+     */
+    updateCostEstimates(selectedNodes) {
+        const hourlyRate = this.attorneyFeesEnabled ? this.chart.getAttorneyHourlyRate() : 0;
+        const estimates = calculateCostEstimates(selectedNodes, hourlyRate);
+
+        // Update summary values
+        const stepsCount = document.getElementById('selectedStepsCount');
+        const daysEstimate = document.getElementById('totalDaysEstimate');
+        const fixedCosts = document.getElementById('totalFixedCosts');
+        const attorneyHours = document.getElementById('totalAttorneyHours');
+        const attorneyFees = document.getElementById('totalAttorneyFees');
+        const grandTotal = document.getElementById('grandTotal');
+
+        if (stepsCount) {
+            stepsCount.textContent = selectedNodes.length;
+        }
+
+        if (daysEstimate) {
+            if (estimates.daysMin === estimates.daysMax) {
+                daysEstimate.textContent = `${estimates.daysMin} days`;
+            } else {
+                daysEstimate.textContent = `${estimates.daysMin} - ${estimates.daysMax} days`;
+            }
+        }
+
+        if (fixedCosts) {
+            fixedCosts.textContent = formatCurrency(estimates.fixedCostsMin, estimates.fixedCostsMax);
+        }
+
+        if (attorneyHours) {
+            if (estimates.hoursMin === estimates.hoursMax) {
+                attorneyHours.textContent = `${estimates.hoursMin} hrs`;
+            } else {
+                attorneyHours.textContent = `${estimates.hoursMin} - ${estimates.hoursMax} hrs`;
+            }
+        }
+
+        if (attorneyFees && this.attorneyFeesEnabled) {
+            attorneyFees.textContent = formatCurrency(estimates.attorneyFeesMin, estimates.attorneyFeesMax);
+        }
+
+        if (grandTotal) {
+            grandTotal.textContent = formatCurrency(estimates.totalMin, estimates.totalMax);
+        }
+
+        // Update selected nodes list
+        this.updateSelectedNodesList(selectedNodes);
+    }
+
+    /**
+     * Update selected nodes list in sidebar
+     * @param {Array} selectedNodes - Array of selected node objects
+     */
+    updateSelectedNodesList(selectedNodes) {
+        const listEl = document.getElementById('selectedNodesUl');
+        if (!listEl) return;
+
+        if (selectedNodes.length === 0) {
+            listEl.innerHTML = '<li class="no-selection">No steps selected. Enable Selection Mode and click nodes to add them.</li>';
+            return;
+        }
+
+        listEl.innerHTML = selectedNodes.map(node => {
+            const name = node.name.replace(/\n/g, ' ');
+            return `
+                <li class="selected-node-item" data-node-id="${node.id}">
+                    <span class="node-name">${name}</span>
+                    <span class="node-cost">${node.cost || 'n/a'}</span>
+                    <button class="remove-node-btn" aria-label="Remove ${name} from selection">
+                        &times;
+                    </button>
+                </li>
+            `;
+        }).join('');
+
+        // Add remove button handlers
+        listEl.querySelectorAll('.remove-node-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const nodeId = parseInt(e.target.closest('li').dataset.nodeId, 10);
+                this.chart.deselectNode(nodeId);
+            });
+        });
     }
 }

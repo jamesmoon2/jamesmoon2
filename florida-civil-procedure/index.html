@@ -120,12 +120,105 @@
             </div>
         </div>
 
+        <!-- Cost Estimator Controls -->
+        <div class="cost-estimator-controls" role="region" aria-label="Cost Estimator Controls">
+            <div class="cost-estimator-header">
+                <span class="cost-estimator-title">Cost Estimator</span>
+            </div>
+            <div class="cost-estimator-toggles">
+                <!-- Attorney Fees Toggle -->
+                <div class="filter-group">
+                    <input
+                        type="checkbox"
+                        id="enableAttorneyFees"
+                        aria-label="Enable attorney fee calculation"
+                    >
+                    <label for="enableAttorneyFees">Enable Attorney Fees</label>
+                </div>
+
+                <!-- Hourly Rate Input (hidden until toggle enabled) -->
+                <div class="hourly-rate-input" id="hourlyRateContainer" style="display: none;">
+                    <label for="hourlyRate">Hourly Rate: $</label>
+                    <input
+                        type="number"
+                        id="hourlyRate"
+                        min="0"
+                        max="2000"
+                        step="25"
+                        value="350"
+                        aria-label="Attorney hourly rate in dollars"
+                    >
+                </div>
+
+                <!-- Selection Mode Toggle -->
+                <div class="filter-group">
+                    <input
+                        type="checkbox"
+                        id="enableSelectionMode"
+                        aria-label="Enable node selection for cost estimation"
+                    >
+                    <label for="enableSelectionMode">Selection Mode</label>
+                </div>
+
+                <!-- Clear Selection Button -->
+                <button id="clearSelections" class="secondary" style="display: none;">
+                    Clear Selections
+                </button>
+            </div>
+        </div>
+
         <!-- Main Chart -->
         <main>
             <div id="chart" role="img" aria-label="Florida Civil Procedure Workflow Diagram">
                 <!-- Chart will be rendered here by D3.js -->
             </div>
         </main>
+
+        <!-- Cost Estimates Sidebar -->
+        <aside class="cost-sidebar" id="costSidebar" role="complementary" aria-label="Cost Estimates">
+            <div class="cost-sidebar-header">
+                <h3>Cost Estimates</h3>
+                <button id="toggleSidebar" class="sidebar-toggle" aria-label="Toggle sidebar">
+                    <span class="collapse-icon">&#x25B6;</span>
+                </button>
+            </div>
+            <div class="cost-sidebar-content" id="costSidebarContent">
+                <div class="cost-summary">
+                    <div class="cost-summary-item">
+                        <span class="cost-label">Selected Steps:</span>
+                        <span class="cost-value" id="selectedStepsCount">0</span>
+                    </div>
+                    <div class="cost-summary-item">
+                        <span class="cost-label">Total Days (Est.):</span>
+                        <span class="cost-value" id="totalDaysEstimate">0 - 0 days</span>
+                    </div>
+                    <div class="cost-summary-item">
+                        <span class="cost-label">Out-of-Pocket Costs:</span>
+                        <span class="cost-value" id="totalFixedCosts">$0</span>
+                    </div>
+                    <div class="cost-summary-item">
+                        <span class="cost-label">Attorney Hours:</span>
+                        <span class="cost-value" id="totalAttorneyHours">0 - 0 hrs</span>
+                    </div>
+                    <div class="cost-summary-item attorney-fees-row" id="attorneyFeesRow" style="display: none;">
+                        <span class="cost-label">Attorney Fees:</span>
+                        <span class="cost-value" id="totalAttorneyFees">$0 - $0</span>
+                    </div>
+                    <div class="cost-summary-item grand-total">
+                        <span class="cost-label">Estimated Total:</span>
+                        <span class="cost-value" id="grandTotal">$0 - $0</span>
+                    </div>
+                </div>
+
+                <!-- Selected Nodes List -->
+                <div class="selected-nodes-list" id="selectedNodesList">
+                    <h4>Selected Steps:</h4>
+                    <ul id="selectedNodesUl">
+                        <li class="no-selection">No steps selected. Enable Selection Mode and click nodes to add them.</li>
+                    </ul>
+                </div>
+            </div>
+        </aside>
 
         <!-- Tooltip -->
         <div class="tooltip" role="tooltip" aria-live="polite">

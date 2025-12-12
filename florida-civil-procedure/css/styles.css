@@ -934,3 +934,333 @@ kbd {
         grid-template-columns: 1fr;
     }
 }
+
+/* ============================================
+   COST ESTIMATOR STYLES
+   ============================================ */
+
+/* Cost Estimator Controls */
+.cost-estimator-controls {
+    margin-bottom: 20px;
+    padding: 16px 20px;
+    background: var(--bg-secondary);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border-color);
+    border-left: 4px solid #10b981;
+}
+
+.cost-estimator-header {
+    margin-bottom: 12px;
+}
+
+.cost-estimator-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.cost-estimator-toggles {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    align-items: center;
+}
+
+/* Hourly Rate Input */
+.hourly-rate-input {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    background: var(--bg-primary);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border-color);
+}
+
+.hourly-rate-input label {
+    font-size: 14px;
+    color: var(--text-primary);
+    white-space: nowrap;
+}
+
+.hourly-rate-input input[type="number"] {
+    width: 80px;
+    padding: 6px 10px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    font-size: 14px;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+}
+
+.hourly-rate-input input[type="number"]:focus {
+    outline: none;
+    border-color: var(--primary-blue);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+/* Selection Mode Cursor */
+#chart.selection-mode {
+    cursor: crosshair;
+}
+
+#chart.selection-mode:active {
+    cursor: crosshair;
+}
+
+/* Selected Node Styling */
+.node-selected rect {
+    stroke: #10b981 !important;
+    stroke-width: 4 !important;
+    filter: drop-shadow(0 0 8px rgba(16, 185, 129, 0.5));
+}
+
+/* When both selected and highlighted */
+.node-selected.node-highlight rect {
+    stroke: #fbbf24 !important;
+}
+
+/* Cost Estimates Sidebar */
+.cost-sidebar {
+    position: fixed;
+    right: -320px;
+    top: 100px;
+    width: 300px;
+    max-height: calc(100vh - 140px);
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-xl);
+    z-index: 500;
+    transition: right 0.3s ease;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.cost-sidebar.visible {
+    right: 20px;
+}
+
+.cost-sidebar.collapsed {
+    width: 44px;
+    right: 20px;
+}
+
+.cost-sidebar.collapsed .cost-sidebar-content {
+    display: none;
+}
+
+.cost-sidebar.collapsed .cost-sidebar-header {
+    flex-direction: column;
+    padding: 12px 8px;
+    gap: 8px;
+    cursor: pointer;
+}
+
+.cost-sidebar.collapsed .cost-sidebar-header h3 {
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+    font-size: 12px;
+    white-space: nowrap;
+}
+
+.cost-sidebar.collapsed .sidebar-toggle {
+    transform: rotate(180deg);
+}
+
+.cost-sidebar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 20px;
+    background: var(--bg-secondary);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.cost-sidebar-header h3 {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 0;
+}
+
+.sidebar-toggle {
+    padding: 6px 10px;
+    background: transparent;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    color: var(--text-secondary);
+    font-size: 12px;
+    transition: all 0.2s ease;
+}
+
+.sidebar-toggle:hover {
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    transform: none;
+    box-shadow: none;
+}
+
+.cost-sidebar-content {
+    padding: 20px;
+    overflow-y: auto;
+    flex: 1;
+}
+
+.cost-summary {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 24px;
+}
+
+.cost-summary-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 12px;
+    background: var(--bg-secondary);
+    border-radius: var(--radius-sm);
+}
+
+.cost-summary-item.grand-total {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    color: white;
+    font-weight: 600;
+}
+
+.cost-summary-item.grand-total .cost-label,
+.cost-summary-item.grand-total .cost-value {
+    color: white;
+}
+
+.cost-label {
+    font-size: 13px;
+    color: var(--text-secondary);
+}
+
+.cost-value {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+/* Selected Nodes List */
+.selected-nodes-list {
+    border-top: 1px solid var(--border-color);
+    padding-top: 16px;
+}
+
+.selected-nodes-list h4 {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin-bottom: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.selected-nodes-list ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.selected-node-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 12px;
+    background: var(--bg-secondary);
+    border-radius: var(--radius-sm);
+    margin-bottom: 8px;
+    transition: background 0.15s ease;
+}
+
+.selected-node-item:hover {
+    background: var(--border-color);
+}
+
+.selected-node-item .node-name {
+    flex: 1;
+    font-size: 13px;
+    color: var(--text-primary);
+    font-weight: 500;
+}
+
+.selected-node-item .node-cost {
+    font-size: 12px;
+    color: var(--text-secondary);
+}
+
+.selected-node-item .remove-node-btn {
+    padding: 4px 8px;
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: var(--radius-sm);
+    transition: all 0.15s ease;
+}
+
+.selected-node-item .remove-node-btn:hover {
+    background: #fee2e2;
+    color: #dc2626;
+    transform: none;
+    box-shadow: none;
+}
+
+.no-selection {
+    font-size: 13px;
+    color: var(--text-muted);
+    font-style: italic;
+    padding: 20px;
+    text-align: center;
+    background: var(--bg-secondary);
+    border-radius: var(--radius-sm);
+}
+
+/* Responsive Sidebar */
+@media (max-width: 768px) {
+    .cost-sidebar {
+        width: calc(100% - 40px);
+        right: -100%;
+        top: auto;
+        bottom: 20px;
+        max-height: 50vh;
+    }
+
+    .cost-sidebar.visible {
+        right: 20px;
+    }
+
+    .cost-sidebar.collapsed {
+        width: 44px;
+        right: 20px;
+        bottom: 20px;
+    }
+}
+
+/* Dark Mode Adjustments for Cost Estimator */
+@media (prefers-color-scheme: dark) {
+    .cost-estimator-controls {
+        border-left-color: #059669;
+    }
+
+    .node-selected rect {
+        filter: drop-shadow(0 0 12px rgba(16, 185, 129, 0.7));
+    }
+
+    .selected-node-item .remove-node-btn:hover {
+        background: rgba(220, 38, 38, 0.2);
+    }
+
+    .hourly-rate-input input[type="number"] {
+        background: var(--bg-secondary);
+    }
+}
