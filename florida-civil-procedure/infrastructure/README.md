@@ -236,6 +236,24 @@ The CDK deploys files from the parent directory (`../`) with these exclusions:
     --paths "/*"
   ```
 
+### JavaScript/CSS Files Not Loading (MIME Type Errors)
+
+**Issue**: Browser console shows errors like `'text/html' is not a valid JavaScript MIME type`
+
+**Root Cause**: S3 BucketDeployment doesn't always set correct content types for JS/CSS files
+
+**Solution**:
+The deployment script automatically fixes MIME types after each deployment. To manually fix:
+```bash
+cd infrastructure
+npm run fix-mime-types
+```
+
+Or run the script directly:
+```bash
+./infrastructure/scripts/fix-mime-types.sh
+```
+
 ### DNS Not Resolving
 
 **Issue**: `law.jamescmooney.com` doesn't resolve
