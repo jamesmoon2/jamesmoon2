@@ -1,4 +1,4 @@
-AI Engineering and Security Focused Repository 
+I am a security engineer and former commercial litigator.
 
 <!---
 jamesmoon2/jamesmoon2 is a ✨ special ✨ repository because its `README.md` (this file) appears on your GitHub profile.
